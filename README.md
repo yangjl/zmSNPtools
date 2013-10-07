@@ -8,6 +8,9 @@ Overview
 =========
 
 
+Update
+=========
+1. update a SNP merge package: merge hapmap1, hapmap2 and RNA-seq data
 
 
 
