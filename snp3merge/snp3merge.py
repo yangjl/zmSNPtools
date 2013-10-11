@@ -87,7 +87,7 @@ def read_batch():
     global hapmap1
     global hapmap2
     global rnaseq
-    
+
     # Get the file names
     infile = open(args['infiles'], 'r')
     for line in infile:
@@ -174,7 +174,7 @@ def do_2snp_merge(htag='hmp12', asnp=['0']):
             warning(akey, "has multiple alleles:", temsnp)
     merged_snp.append(asnp[0][31])
     merged_snp.append(htag)
-
+    return merged_snp
 
 def comp2sets(akey='1_1000', asnp=['0']):
 
@@ -188,26 +188,26 @@ def comp2sets(akey='1_1000', asnp=['0']):
     if snp1set == snp2set:
         if sets == set(["hmp1", "hmp2"]):
             lmat['hmp12'].append(akey)
-            do_2snp_merge(htag='hmp12', asnp=asnp)
+            merged_snp = do_2snp_merge(htag='hmp12', asnp=asnp)
         elif sets == set(['hmp1', 'rnaseq']):
             lmat['hmp1rna'].append(akey)
-            do_2snp_merge(htag='hmp1rna', asnp=asnp)
+            merged_snp = do_2snp_merge(htag='hmp1rna', asnp=asnp)
         elif sets == set(['hmp2', 'rnaseq']):
             lmat['hmp2rna'].append(akey)
-            do_2snp_merge(htag='hmp2rna', asnp=asnp)
+            merged_snp = do_2snp_merge(htag='hmp2rna', asnp=asnp)
         else:
             warning(akey, "has set:", sets)
 
     else:
         if sets == set(["hmp1", "hmp2"]):
             lunmat['hmp12'].append(akey)
-            do_2snp_merge(htag='hmp12')
+            merged_snp = do_2snp_merge(htag='hmp12', asnp=asnp)
         elif sets == set(['hmp1', 'rnaseq']):
             lunmat['hmp1rna'].append(akey)
-            do_2snp_merge(htag='hmp1rna')
+            merged_snp = do_2snp_merge(htag='hmp1rna', asnp=asnp)
         elif sets == set(['hmp2', 'rnaseq']):
             lunmat['hmp2rna'].append(akey)
-            do_2snp_merge(htag='hmp2rna')
+            merged_snp = do_2snp_merge(htag='hmp2rna', asnp=asnp)
         else:
             warning(akey, "has set:", sets)
         merged_snp = []
@@ -323,8 +323,11 @@ main
 parser = get_parser()
 args = vars(parser.parse_args())
 
-if args['help'] is None:
+if args['infiles'] or args['hmp1'] is None:
     print(version())
+
+if args['path'] is not None:
+    os.chdir(args['path'])
 
 header = ['rs', 'alleles', 'chr', 'pos', 'B73', 'Z001', \
 'Z002', 'Z003', 'Z004', 'Z005', 'Z006', 'Z007', 'Z008', 'Z009', \
@@ -357,4 +360,4 @@ print('Writing merged data to file...')
 writeMergedData()
 
 print('Writing log file...')
-writeLog()    
+writeLog()
