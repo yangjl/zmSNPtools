@@ -1,9 +1,15 @@
 #Oct 8th, 2013
 snp3merge.py
+=================
 Indel merge need to be improved:
 1.deal with +/- and -/+
 2.deal with multiple alleles
 3.deal with duplicated SNP calling
 
+impute4diallel.py
+=================
+
+snp_frq_missing.py
+=================
 
 
