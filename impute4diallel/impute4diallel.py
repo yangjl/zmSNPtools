@@ -48,8 +48,9 @@ def get_parser():
                         0, for GenSel;
                         1, for PLINK;
                         2, for SNPTEST;
+                        3, for raw;
                         ''',
-                        choices=[0,1,2], default=0, type=int)
+                        choices=[0,1,2,3], default=0, type=int)
     return parser
     #parser = get_parser()
     #parser.print_help()
@@ -79,7 +80,7 @@ def read2lofd(file_name):
     secline = infile.readline()
     sec = secline.split()
     if(len(str(sec[4])) != 1):
-        waring("SNP should code with one latter, like:'A'!")
+        warning("SNP should code with one latter, like:'A'!")
     infile.close()
     
     temp = []
@@ -122,6 +123,40 @@ def get_loci_info(tokens):
     return temp1
 
 ##########################################################################################
+def impute_raw(loci=[], ped=[]):
+    '''
+    raw type
+    '''
+    mysnp = [loci['chr'], loci['id'], loci['pos']]
+    for aped in ped:
+        psnp1 = loci[aped[0]]
+        psnp2 = loci[aped[1]]
+        # using original SNP coding "ATCG"
+        major = loci['major']
+        minor = loci['minor']
+        
+        # probility of AA, AB and BB        
+        if psnp1 == major and psnp2 == major:
+            mysnp.append('\t'.join([major, major]))
+        elif psnp1 == major and psnp2 == minor:
+            mysnp.append('\t'.join([major, minor]))
+        elif psnp1 == major and psnp2 == "N":
+            mysnp.append('\t'.join([major, 'N']))
+        elif psnp1 == minor and psnp2 == major:
+            mysnp.append('\t'.join([major, minor]))
+        elif psnp1 == minor and psnp2 == minor:
+            mysnp.append('\t'.join([minor, minor]))
+        elif psnp1 == minor and psnp2 == "N":
+            mysnp.append('\t'.join([minor, 'N']))
+        elif psnp1 == "N" and psnp2 == major:
+            mysnp.append('\t'.join([major, 'N']))
+        elif psnp1 == "N" and psnp2 == minor:
+            mysnp.append('\t'.join([minor, 'N']))      
+        elif psnp1 == "N" and psnp2 == "N":
+            mysnp.append('\t'.join(['N', 'N']))
+        else:
+            warnings(loci['id'], "have gensel imputation error!!!")
+    return mysnp   
 
     
 def impute_gensel(aped=[], dsnp=[]):
@@ -265,6 +300,11 @@ def impute_write(ped=[], dsnp=[], mode=0):
             outfile.write('\t'.join(imputesnp) + '\n')
     if mode == 2:
         print("impute", len(dsnp), " SNPs at mode=snptest")
+        for loci in dsnp:
+            imputesnp = impute_snptest(loci=loci, ped=ped)
+            outfile.write('\t'.join(imputesnp) + '\n')
+    if mode == 3:
+        print("impute", len(dsnp), " SNPs at mode=raw")
         for loci in dsnp:
             imputesnp = impute_snptest(loci=loci, ped=ped)
             outfile.write('\t'.join(imputesnp) + '\n')
