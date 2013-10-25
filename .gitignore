@@ -8,8 +8,8 @@
 *.so
 
 # folder #
-test/
-MyPack/
+#test/
+#MyPack/
 
 # Packages #
 ############
