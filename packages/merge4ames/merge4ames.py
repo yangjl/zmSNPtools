@@ -57,18 +57,16 @@ def warning(*objs):
     sys.exit()
 
 ##########################################################################################
-def read_idx(amesidx_file):
+def read_idx(ames_idx_file):
     temp = []
-    infile = open(amesidx_file, 'r')
+    infile = open(ames_idx_file, 'r')
     next(infile)
     for line in infile:
         line = line.strip()
         token = line.split('\t')
         temp.append(token)
     infile.close()
-    return temp
-
-test
+    return temp # return a list of list ['PI405705', '16 17 18 19 20 21', '6']
 
 #The GBS genotype files in HapMap format (*.hmp.txt.gz) can be opened directly in TASSEL in
 #their compressed (*.gz) state. To save space, we use single letters to encode unphased,
