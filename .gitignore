@@ -8,8 +8,9 @@
 *.so
 
 # folder #
-#test/
-#MyPack/
+test/
+MyPack/
+.idea/
 
 # Packages #
 ############
