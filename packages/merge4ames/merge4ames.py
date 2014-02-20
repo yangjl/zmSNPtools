@@ -84,11 +84,7 @@ def read_idx(ames_idx_file):
 #N = missing
 def read_snp(snpfile):
     temsnp = []
-    countN = 0
-    countATCG = 0
-    countY = 0
     infile = open(snpfile, 'r')
-    
     fline = infile.readline()
     nms = fline.split()
 
@@ -98,37 +94,37 @@ def read_snp(snpfile):
         for i in xrange(11, len(token)):
             if token[i] == 'A':
                 token[i] = 'A A'
-                countATCG += 1
+                count['ATCG'] += 1
             elif token[i] == 'C':
                 token[i] = 'C C'
-                countATCG += 1
+                count['ATCG'] += 1
             elif token[i] == 'G':
                 token[i] = 'G G'
-                countATCG += 1
+                count['ATCG'] += 1
             elif token[i] == 'T':
                 token[i] = 'T T'
-                countATCG += 1
+                count['ATCG'] += 1
             elif token[i] == 'K':
-                token[i] == 'G T'
-                countY += 1
+                token[i] = 'G T'
+                count['Y'] += 1
             elif token[i] == 'M':
                 token[i] = 'A C'
-                countY += 1
+                count['Y'] += 1
             elif token[i] == 'R':
                 token[i] = 'A G'
-                countY += 1
+                count['Y'] += 1
             elif token[i] == 'S':
                 token[i] = 'C G'
-                countY += 1
+                count['Y'] += 1
             elif token[i] == 'W':
                 token[i] = 'A T'
-                countY += 1
+                count['Y'] += 1
             elif token[i] == 'Y':
                 token[i] = 'C T'
-                countY += 1
+                count['Y'] += 1
             elif token[i] == 'N':
                 token[i] = 'N N'
-                countN += 1
+                count['N'] += 1
             else:
                 warning("Non reconginzed alleles found!", token[i])
         temsnp.append(token)
@@ -139,6 +135,7 @@ def read_snp(snpfile):
 global countN
 global countATCG
 global countY
+count = {'ATCG':0, 'Y':0, 'N':0}
 # snpmatrix = read_snp("AmesUSInbreds_AllZeaGBSv1.0_imputed_20130508_chr2.hmp.txt")    
 
 
