@@ -3,7 +3,14 @@ zmSNPtools
 
 A collection of codes designed to process a range of basic, large-scale analyses for SNPs of maize diversity panel.
 
-
+Usage
+=========
+Add the symbolic link to your local bin in your $PATH:
+for example:
+```
+$: ln -s impute4diallel ~/bin/impute4diallel
+$: impute4diallel -h
+```
 Overview
 =========
 
