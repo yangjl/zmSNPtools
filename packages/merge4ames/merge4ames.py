@@ -132,51 +132,63 @@ def read_snp(snpfile):
     return(temsnp)
 
 # you can read a global without declaring it global, but to write a global, you need to declare it.
-global countN
-global countATCG
-global countY
+
 count = {'ATCG':0, 'Y':0, 'N':0}
-# snpmatrix = read_snp("AmesUSInbreds_AllZeaGBSv1.0_imputed_20130508_chr2.hmp.txt")    
-
-
+# snpmatrix = read_snp("AmesUSInbreds_AllZeaGBSv1.0_imputed_20130508_chr2.hmp.txt")
 
 def get_maf_missing(onesnp):
-    snptable = Counter(onesnp)
+    snptable = Counter(onesnp[11:])
     dict = {}
     if 'N N' in snptable:
-        dict['missing'] = float(snptable['N N'])/4476
+        dict['missing'] = float(snptable['N N'])/(len(onesnp) - 11)
         del(snptable['N N'])
     else:
         dict['missing'] = 0
      
-    if len(snptable) <= 1:
+    if len(snptable) == 1:
         dict['maf'] = 0
-    elif len(snptable) == 2:
-        ssnp = sorted(snptable.values())
-        dict['maf'] = float(ssnp[0])/(ssnp[0] + ssnp[1])
-        skey = sorted(snptable, key=snptable.__getitem__)
-        dict['minor'] = skey[0].split()[0]
-    elif len(snptable) == 3:
-        mysnp = []
+        for key in snptable:
+            dict['major'] = key.split()[0]
+            dict['minor'] = dict['major']
+    elif len(snptable) == 2 or len(snptable) == 3:
+        mysnp = {} #assign a hash to A or T SNP type
         for key in snptable:
             temsnp = key.split()
-            if temsnp[0] != temsnp[1]
-                heterkey = key
-                hetervalue = snptable[key]
-            mysnp.append(temsnp)
-        if len(set(mysnp)) = 2:
-            del(snptable[heterkey])
-            ssnp = sorted(snptable.values())
-            dict['maf'] = float(2*ssnp[0] + hetervalue)/(2*ssnp[0] + 2*hetervalue + 2*ssnp[1])
-            skey = sorted(snptable, key=snptable.__getitem__)
-            dict['minor'] = skey[0].split()[0]
-            
+            if temsnp[0] == temsnp[1]:
+                if temsnp[0] in mysnp:
+                    mysnp[temsnp[0]] = mysnp[temsnp[0]] + 2*snptable[key]
+                else:
+                    mysnp[temsnp[0]] = 2*snptable[key]
+            elif temsnp[0] != temsnp[1]:
+                if temsnp[0] in mysnp:
+                    mysnp[temsnp[0]] = mysnp[temsnp[0]] + snptable[key]
+                else:
+                    mysnp[temsnp[0]] = snptable[key]
+                if temsnp[1] in mysnp:
+                    mysnp[temsnp[1]] = mysnp[temsnp[1]] + snptable[key]
+                else:
+                    mysnp[temsnp[1]] = snptable[key]
+        #### end of the for loop
+        if len(mysnp) == 2:
+            ### sort: A T
+            sortedsnp = sorted(mysnp.values())
+            dict['maf'] = float(sortedsnp[0])/(sortedsnp[0] + sortedsnp[1])
+            sortedkey = sorted(mysnp, key=mysnp.__getitem__)
+            dict['minor'] = sortedkey[0]
+            dict['major'] = sortedkey[1]
         else:
-            print(snptable)
-          
+            dict['maf'] = -9 ### multiple alleles
+            for key in mysnp:
+                dict['minor'] = ' '.join(key)
+                dict['major'] = ' '.join(key)
     else:
-        print(snptable)       
-    return({})
+        dict['maf'] = -8 ### multiple alleles
+        for key in snptable:
+            dict['minor'] = ' '.join(key)
+            dict['major'] = ' '.join(key)
+    return dict
+
+
 
 def snp_merge(amesidx=, snpmatrix=):
     
