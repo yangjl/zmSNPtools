@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from collections import Counter
 from __future__ import print_function
+from collections import Counter
 import sys
 import argparse
 import textwrap
@@ -36,19 +36,18 @@ def get_parser():
     # optional arguments:
     parser.add_argument('-p', '--path', help='the path of the input files', \
                         nargs='?', default=os.getcwd())
-    parser.add_argument('--hmp1', help='path of the input hmp1 data', type=str)
-    parser.add_argument('--hmp2', help='path of the input hmp2 data', type=str)
-    parser.add_argument('--rnaseq', help='path of the input rna-seq data', type=str)
+    parser.add_argument('--cutoff', help='cutoff of the consensus', type=float)
+    parser.add_argument('--idx', help='path of the idx file', type=str)
+    parser.add_argument('--infile', help='path of the input chr data', type=str)
     parser.add_argument('-f', '--infiles', help='a list of merging files', type=str)
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
     parser.add_argument('-m','--mode',
-                        help='''[--mode=0 default], consensus, otherwise N;
-                        1, keep hmp1;
-                        2, keep hmp2;
-                        3, keep RNA-seq;
-                        4, vote the most freq call.
+                        help=''' mode for output format:
+                        [--mode=1 default],
+                        0, Other not determined;
+                        1, GenSel format;
                         ''',
-                        choices=[0,1,2,3,4], default=0, type=int)
+                        choices=[0,1], default=1, type=int)
     return parser
 
 ### use print_function
@@ -131,16 +130,11 @@ def read_snp(snpfile):
     infile.close()
     return(temsnp)
 
-# you can read a global without declaring it global, but to write a global, you need to declare it.
-
-count = {'ATCG':0, 'Y':0, 'N':0}
-# snpmatrix = read_snp("AmesUSInbreds_AllZeaGBSv1.0_imputed_20130508_chr2.hmp.txt")
-
-def get_maf_missing(onesnp):
-    snptable = Counter(onesnp[11:])
+def get_maf_missing(asnp=snp[0][11:]):
+    snptable = Counter(asnp)
     dict = {}
     if 'N N' in snptable:
-        dict['missing'] = float(snptable['N N'])/(len(onesnp) - 11)
+        dict['missing'] = float(snptable['N N'])/(len(asnp) - 11)
         del(snptable['N N'])
     else:
         dict['missing'] = 0
@@ -188,284 +182,142 @@ def get_maf_missing(onesnp):
             dict['major'] = ' '.join(key)
     return dict
 
+def consensus_snp_call(idxob=amesidx[5][1], onesnp=snp[0], CUTOFF=0.6):
 
+    idxlist = idxob.split()
+    snpcalls =[]
+    for idx in idxlist:
+        snpcalls.append(onesnp[int(idx) -1])
+    snptable2 = Counter(snpcalls)
+    if 'N N' in snptable2:
+        del(snptable2['N N'])
 
-def snp_merge(amesidx=, snpmatrix=):
-    
-    for i in range(len(amesidx)):
-    
-    
-        if(amesidx[i][2] == 1):
-            resout.append(snpmatrix[amesidx[i]-1])
-        elif (amesidx[i][2] > 1):
-            myidx = amesidx[i][1].split()
-            for idx in myidx:
-                mysnps.append(snpmstrix[idx -1])
-            
-
-def snpcondense(mysnp):
-    snpset = set(mysnp)
-    if 'N' in snpset:
-        snpset.remove('N')
-    
-    snpset = list(snpset)
-    if len(snpset) == 0:
-        snpcall = "N"
-    elif len(snpset) == 1:
-        snpcall = snpset[0]
-    elif len(snpset) == 2:
-        snpcount = Counter(mysnp)
-        if snpcount[snpset[0]] > snpcount[snpset[1]]:
-            snpcall = snpset[0]
+    if len(snptable2) == 0:
+        mysnp = ['N N']
+    elif len(snptable2) == 1:
+        mysnp = snptable2.keys()
+    elif len(snptable2) >= 2:
+        sortedsnp = sorted(snptable2, key=snptable2.__getitem__)
+        sortedval = sorted(snptable2.values())
+        frq = float(sortedval[-1])/sum(sortedval)
+        if frq >= CUTOFF:
+            mysnp = [sortedsnp[-1]]
         else:
-            snpcall = snpset[1]
+            mysnp = ['N N']
     else:
-        warning("multiple alleles found!")    
-    return(snpcall)
-        
-        
-    snpcount = Counter(mysnp)
-    
-    
-    
-    for snptype in snpset:
-    
+        mysnp = 'ERROR'
+        print('Error detected for SNP:', onesnp[0])
+    return mysnp
 
+#snp[3][15:20]
+#consensus_snp_call(idxob=amesidx[4][1], onesnp=snp[3])
 
-def removeN_set(mysnp):
-    snpset = set(mysnp)
-    if 'N' in snpset:
-        snpset.remove('N')
-    return snpset
+def one_snp_merge(amesidx=amesidx, onesnp=[]):
 
+    resout = {'noploy':[], 'multi':[], 'snp':[]}
 
-
-##########################################################################################    
-    
-
-
-
-
-
-def readsnp_LofD(file_name, origin="hmp1"):
-
-    infile = open(file_name, 'r')
-    temp = []
-    firstline = infile.readline()
-    first = firstline.split()
-    if first != header:
-        warning("following this header:", header)
-    secline = infile.readline()
-    sec = secline.split()
-    if(len(str(sec[4])) != 1):
-        waring("SNP should code with one latter, like:'A'!")
-    infile.close()
-
-    infile = open(file_name, 'r')
-    next(infile) # skip the header line
-    for line in infile:
-        tokens = line.split()
-        tokens.append(origin)
-        key = tokens[2] + "_" + tokens[3]
-        temp.append({key:tokens})
-    infile.close()
-    return temp
-
-def read_batch():
-    print('Reading data from batch mode...')
-    global hapmap1
-    global hapmap2
-    global rnaseq
-
-    # Get the file names
-    infile = open(args['infiles'], 'r')
-    for line in infile:
-        aline = line.split()
-        if aline[0] == 'hapmap1':
-            print("---- processing", os.path.basename(aline[1]))
-            hapmap1 = hapmap1 + readsnp_LofD(aline[1], origin="hmp1")
-        elif aline[0] == 'hapmap2':
-            print("---- processing", os.path.basename(aline[1]))
-            hapmap2 = hapmap2 + readsnp_LofD(aline[1], origin="hmp2")
-        elif aline[0] == 'rnaseq':
-            print("---- processing", os.path.basename(aline[1]))
-            rnaseq = rnaseq + readsnp_LofD(aline[1], origin="rnaseq")
-        else:
-            warning("must indicate file type: hapmap1, hapmap2, rnaseq!")
-    infile.close()
-
-    input = hapmap1 + hapmap2 + rnaseq
-    print(len(input), "SNPs were loaded!")
-    return input
-
-def read_chr():
-    print('Reading HamMap1 data...')
-    print('---- processing', os.path.basename(args['hmp1']))
-    hapmap1 = readsnp_LofD(args['hmp1'], origin='hmp1')
-
-    print('Reading HamMap2 data...')
-    print('---- processing', os.path.basename(args['hmp2']))
-    hapmap2 = readsnp_LofD(args['hmp2'], origin='hmp2')
-
-    print('Reading RNA-seq data...')
-    print('---- processing', os.path.basename(args['rnaseq']))
-    rnaseq = readsnp_LofD(args['rnaseq'], origin='rnaseq')
-
-    input = hapmap1 + hapmap2 + rnaseq
-    print(len(input), "SNPs were loaded!")
-    return input
-
-
-
-##########################################################################################
-"""
-input is a list of dic
-http://stackoverflow.com/questions/11358242/python-dictionary-with-same-keys
-"""
-
-def merge_snp():
-
-    snpdic = {}
-    for snp in input:
-
-        ((x,y),) = snp.items()
-        snpdic.setdefault(x,[]).append(y)
-
-    for key, value in sorted(snpdic.items()):
-        if len(value) == 1:
-            unq[value[0][-1]].append(key)
-            res.append(value[0])
-        if len(value) == 2:
-            tmp = comp2sets(akey=key, asnp=value)
-            if tmp:
-                res.append(tmp)
-        if len(value) == 3:
-            tmp = comp3sets(akey=key, asnp=value)
-            if tmp:
-                res.append(tmp)
-
-
-def do_2snp_merge(htag='hmp12', asnp=['0']):
-    snp1 = asnp[0]
-    snp2 = asnp[1]
-    merged_snp = asnp[0][0:4]
-    for idx in range(4,31):
-        temsnp = removeN_set([snp1[idx], snp2[idx]])
-        temsnp = list(temsnp)
-        if len(temsnp) == 2:
-            merged_snp.append('N')
-            aunmat[htag] += 1
-        elif len(temsnp) == 0:
-            merged_snp.append('N')
-            amat[htag] += 1
-        elif len(temsnp) == 1:
-            merged_snp.append(temsnp[0])
-            amat[htag] += 1
-        else:
-            warning(akey, "has multiple alleles:", temsnp)
-    merged_snp.append(asnp[0][31])
-    merged_snp.append(htag)
-    return merged_snp
-
-def comp2sets(akey='1_1000', asnp=['0']):
-
-    snp1set = removeN_set(asnp[0][4:31])
-    snp2set = removeN_set(asnp[1][4:31])
-
-    sets = set([ asnp[0][-1], asnp[1][-1] ])
-
-    merged_snp = []
-
-    if snp1set == snp2set:
-        if sets == set(["hmp1", "hmp2"]):
-            lmat['hmp12'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp12', asnp=asnp)
-        elif sets == set(['hmp1', 'rnaseq']):
-            lmat['hmp1rna'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp1rna', asnp=asnp)
-        elif sets == set(['hmp2', 'rnaseq']):
-            lmat['hmp2rna'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp2rna', asnp=asnp)
-        else:
-            warning(akey, "has set:", sets)
-
+    snpinfo = get_maf_missing(asnp= onesnp[11:])
+    if snpinfo['maf'] == 0:
+        # SNP has no polymorphism
+        resout['noploy'].append(onesnp[0])
+    elif snpinfo['maf'] < 0:
+        # SNP have multiple alleles
+        resout['multi'].append(onesnp[0])
     else:
-        if sets == set(["hmp1", "hmp2"]):
-            lunmat['hmp12'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp12', asnp=asnp)
-        elif sets == set(['hmp1', 'rnaseq']):
-            lunmat['hmp1rna'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp1rna', asnp=asnp)
-        elif sets == set(['hmp2', 'rnaseq']):
-            lunmat['hmp2rna'].append(akey)
-            merged_snp = do_2snp_merge(htag='hmp2rna', asnp=asnp)
-        else:
-            warning(akey, "has set:", sets)
-        merged_snp = []
-
-    return merged_snp
-
-
-
-def removeN_set(mysnp):
-    snpset = set(mysnp)
-    if 'N' in snpset:
-        snpset.remove('N')
-    return snpset
-
-
-def comp3sets(akey='1_1000', asnp=['0','1']):
-
-    snp1set = removeN_set(asnp[0][4:31])
-    snp2set = removeN_set(asnp[1][4:31])
-    snp3set = removeN_set(asnp[2][4:31])
-
-    mysnp = {}
-    for tag in asnp:
-        mysnp[tag[-1]] = tag
-
-    merged_snp = []
-    if snp1set == snp2set == snp3set:
-        merged_snp = mysnp['hmp1'][0:4]
-        lmat['hmp12rna'].append(akey)
-
-        for idx in range(4,31):
-            temsnp = removeN_set([mysnp['hmp1'][idx], mysnp['hmp2'][idx], mysnp['rnaseq'][idx]])
-            temsnp = list(temsnp)
-            if len(temsnp) == 2:
-                aunmat['hmp12rna'] += 1
-                merged_snp.append('N')
-            elif len(temsnp) == 0:
-                merged_snp.append('N')
-            elif len(temsnp) == 1:
-                amat['hmp12rna'] += 1
-                merged_snp.append(temsnp[0])
+        # merge one SNP for each accession
+        temsnp = [onesnp[0]]
+        for plant in amesidx:
+            if plant[2] == 1:
+                temsnp.extend(onesnp[int(plant[1]) - 1])
+            # merge duplicated calls with consensus mode
+            elif plant[2] > 0:
+                snpcall = consensus_snp_call(idxob=plant[1], onesnp=onesnp, CUTOFF=0.6)
+                temsnp.extend(snpcall)
             else:
-                warning(akey, "has multiple alleles:", temsnp)
+                print("Error type 1: amesidx error", amesidx[i])
+        aftermaf = get_maf_missing(asnp=temsnp[1:])
+        resout['snp'] = [temsnp[0]] + [aftermaf['minor']] + [aftermaf['maf']] + [aftermaf['missing']] + temsnp[1:]
+    return resout
 
-        merged_snp.append(mysnp['hmp1'][31])
-        merged_snp.append("hmp12rna")
+def merge_all():
+    count = {'ATCG':0, 'Y':0, 'N':0}
+
+    print("---- reading index file:", os.path.basename(args['idxfile']));
+    idx = read_idx(args['idxfile'])
+
+    snpall = []
+    #### process all file together for GenSel:
+    if args['batch'] == 1:
+        infile = open(args['infiles'], 'r')
+        for line in infile:
+            chr = read_snp(snpfile=line)
+            print("- reading: [", len(chr), "] SNPs from: [" os.path.basename(line), "]")
+            snpall.append(chr)
+
+
+    #### process one chr at a time
+    if args['batch'] == 0:
+        chr = read_snp(snpfile=args['infile'])
+        print("- reading: [", len(chr), "] SNPs from: [", os.path.basename(args['infile']), "]")
+        snpall = chr
+
+    snpout = []
+    for snpi in xrange(snpall['']):
+        snpout.append(one_snp_merge(amesidx=idx, onesnp=snpi))
+
+    #### start to print
+    if mode == 1: #GenSel
+
+
+    elif mode == 2:
+
     else:
-         lunmat['hmp12rna'].append(akey)
+        print("Error: Please try other mode (0,1)")
 
-    return merged_snp
+
+
+def recoding_output(snpline):
+    if mode == 1: #GenSel
+
+        #### SNP transpose
+        for snpi in snpline:
+            temsnp = snpi.split()[0]
+            if temsnp == minor: # -10
+                snpout.append(-10)
+            elif temsnp != minor: #10
+                snpout.append(10)
+            elif temsnp == "N":
+                snpout.append(0)
+
+
+
+
+
+
+            for snpj in snpi:
+
+            gensel[1]
+
+    outfile = open(args['output'], "w")
+    outfile.write("\t".join(header) + )
+    for i in res:
+        outfile.write("\t".join(snp) + '\n')
+    outfile.close()
+
+
+
+
+def writeLog():
+
+    outfile = open(args['output'] + 'log', "w")
+
+    outfile.close()
+
+
+
 
 ##########################################################################################
 
-def writeMergedData():
-	"""
-	Write the merged data to a single file for use in downstream applications.
-
-	Input: A string containing the path to write the file to.
-	"""
-
-	outfile = open(args['output'], 'w')
-
-	outfile.write('\t'.join(header) + '\t' + 'source' + '\n')
-	for snp in res:
-		outfile.write('\t'.join(snp) + '\n')
-
-	outfile.close()
 
 def writeLog():
 	"""
@@ -507,7 +359,7 @@ def writeLog():
 
 	outfile.close()
 
-
+########################################################################################################################
 '''
 main
 '''
