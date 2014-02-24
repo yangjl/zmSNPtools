@@ -214,8 +214,10 @@ def consensus_snp_call(idxob=amesidx[5][1], onesnp=snp[0], CUTOFF=0.6):
 
 def one_snp_merge(amesidx=amesidx, onesnp=[]):
 
-    resout = {'noploy':[], 'multi':[], 'snp':[]}
+    """
 
+    :rtype : resout
+    """
     snpinfo = get_maf_missing(asnp= onesnp[11:])
     if snpinfo['maf'] == 0:
         # SNP has no polymorphism
@@ -237,10 +239,11 @@ def one_snp_merge(amesidx=amesidx, onesnp=[]):
                 print("Error type 1: amesidx error", amesidx[i])
         aftermaf = get_maf_missing(asnp=temsnp[1:])
         resout['snp'] = [temsnp[0]] + [aftermaf['minor']] + [aftermaf['maf']] + [aftermaf['missing']] + temsnp[1:]
-    return resout
 
 def merge_all():
+    # results:
     count = {'ATCG':0, 'Y':0, 'N':0}
+    resout = {'noploy':[], 'multi':[], 'snp':[]}
 
     print("---- reading index file:", os.path.basename(args['idxfile']));
     idx = read_idx(args['idxfile'])
@@ -251,9 +254,8 @@ def merge_all():
         infile = open(args['infiles'], 'r')
         for line in infile:
             chr = read_snp(snpfile=line)
-            print("- reading: [", len(chr), "] SNPs from: [" os.path.basename(line), "]")
+            print("- reading: [", len(chr), "] SNPs from: [", os.path.basename(line), "]")
             snpall.append(chr)
-
 
     #### process one chr at a time
     if args['batch'] == 0:
@@ -262,25 +264,28 @@ def merge_all():
         snpall = chr
 
     snpout = []
-    for snpi in xrange(snpall['']):
-        snpout.append(one_snp_merge(amesidx=idx, onesnp=snpi))
+    for snpi in xrange(snpall):
+        one_snp_merge(amesidx=idx, onesnp=snpi)
+    mode = args['mode']
+    if mode == 1:
+        for mysnp in xrange(resout['snp']):
+            for i in range(4,len(mysnp)):
+                twocall = mysnp[i].split()
+                if twocall[0] != twocall[1]:
+                    mysnp[i] = 0
+                elif twocall[0] == "N":
+                    mysnp[i] = 0
+                elif twocall[0] == mysnp[]
 
-    #### start to print
-    if mode == 1: #GenSel
-
-
-    elif mode == 2:
-
-    else:
-        print("Error: Please try other mode (0,1)")
 
 
 
 def recoding_output(snpline):
+
     if mode == 1: #GenSel
 
         #### SNP transpose
-        for snpi in snpline:
+        for snpi in snpall:
             temsnp = snpi.split()[0]
             if temsnp == minor: # -10
                 snpout.append(-10)
@@ -309,11 +314,16 @@ def recoding_output(snpline):
 
 def writeLog():
 
-    outfile = open(args['output'] + 'log', "w")
-
-    outfile.close()
-
-
+    outfile1 = open(args['output'] + '.noploy', 'w')
+    outfile1.write('\n'.join(resout['noploy']))
+    outfile1.close()
+    
+    outfile2 = open(args['output'] + '.multi', 'w')
+    outfile2.write('\n'.join(resout['multi']))
+    outfile2.close()
+    
+    outfile3 = open(args['output'] + '.log', 'w')
+    outfile3.write()
 
 
 ##########################################################################################
