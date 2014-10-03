@@ -8,54 +8,7 @@ import textwrap
 import timeit
 import os
 
-def version():
-    v1 = """
-################################################################################
- impute4diallel version 0.1.1
- Jinliang Yang
- updated: July.12.2013
- changes: input changed to sdf
- --------------------------------
 
- SNP Imputation for diallel!
-################################################################################
-"""
-    return v1
-
-def get_parser():
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(version())
-        )
-
-    # positional arguments:
-    #parser.add_argument('query', metavar='QUERY', type=str, nargs='*', \
-    #                    help='the question to answer')
-
-    # optional arguments:
-    parser.add_argument('-p', '--path', help='the path of the input files', \
-                        nargs='?', default=os.getcwd())
-    parser.add_argument('-d','--diallel', help='pedigree of the diallels', type=str)
-    parser.add_argument('--dsnp', help='path of the density SNP file', type=str)
-    parser.add_argument('-s', '--start', help='start column number of the founder lines \
-                        [defult: --start=4]', default=4, type=int)
-    parser.add_argument('-e', '--end', help='end column number of the founder lines \
-                        [defult: --end=31]', default=31, type=int)
-    parser.add_argument('--header', help='print header or not [default: --header=no]', type=str,
-                        choices=['yes','no'], default='no')
-    
-    parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
-    parser.add_argument('-m','--mode',
-                        help='''[default --mode=0];
-                        0, for GenSel;
-                        1, for PLINK;
-                        2, for SNPTEST;
-                        3, for raw;
-                        ''',
-                        choices=[0,1,2,3], default=0, type=int)
-    return parser
-    #parser = get_parser()
-    #parser.print_help()
 
 def warning(*objs):
     print("WARNING: ", *objs, end='\n', file=sys.stderr)
@@ -72,58 +25,39 @@ def read_ped(pedfile):
     infile.close()
     return temp
 
+##########################################################################################
+def checkFile(infile_name):
 
-def read2lofd(file_name):
-    infile = open(file_name, 'r')
-    
-    firstline = infile.readline()
-    first = firstline.split()
-    #check the header information#
-    secline = infile.readline()
-    sec = secline.split()
-    if(len(str(sec[4])) != 1):
-        warning("SNP should code with one latter, like:'A'!")
-    infile.close()
-    
+    with open(infile_name, 'r') as infile:
+        ### check the first line
+        line1 = infile.readline()
+        line1a = line1.split()
+        if(line1a[0] != "snpid" or line1a[1] != "major" or line1a[2] != "minor"):
+            warning("snpid major and minor should be the first three columns in the header")
+        else:
+            print("input file header OK!")
+
+        ### check the 2nd line
+        line2 = infile.readline()
+        line2array = line2.split()
+        for snpi in range(start, end):
+            if(len(str(line2array[snpi])) != 1):
+                warning("SNP should be coded with one latter, like:'A T C G or - +'!")
+        else:
+            print("input file coding format OK!")
+
+def readLofD(infile_name):
     temp = []
-    infile = open(file_name, 'r')
-    next(infile) # skip the header line
-    for line in infile:
-        tokens = line.split()
-        out = get_loci_info(tokens)
-        if out:
-            temp.append(out)
-    infile.close()
-    return temp
-#test: test = read2lofd(f)
+    with open(infile_name, 'r') as infile:
+        next(infile) # skip the header line
+        for line in infile:
+            tokens = line.split()
+            key = tokens[0]
+            temp.append({key:tokens})
+        return temp
 
-def get_loci_info(tokens):
-    
-    set0 = set(tokens[start:end])
-    if 'N' in set0:
-        set0.remove('N')
-    snpset = list(set0)
-        
-    temp1 = {} 
-    if len(snpset) != 2:
-        prob.append(tokens)
-    else: 
-        c1 = tokens[start:end].count(snpset[0])
-        c2 = tokens[start:end].count(snpset[1])
-   
-        for i in range(0, len(first)):
+for i in range(0, len(first)):
             temp1[first[i]] = tokens[i]
-            if c1 >= c2:
-                temp1['major'] = snpset[0]
-                temp1['minor'] = snpset[1]
-                temp1['maf'] = c2/(c1+c2)
-            else:
-                temp1['major'] = snpset[1]
-                temp1['minor'] = snpset[0]
-                temp1['maf'] = c1/(c1+c2)
-            temp1['missing'] = end - start - c1 - c2
-    return temp1
-
 ##########################################################################################
 def impute_raw(loci=[], ped=[]):
     '''
@@ -237,7 +171,7 @@ def impute_snptest(loci=[], ped=[]):
     The next three numbers on the line should be the probabilities of the three 
     genotypes AA, AB and BB at the SNP for the first individual in the cohort
     '''
-    mysnp = [loci['snpid'], loci['major'], loci['minor']]
+    mysnp = [loci['chr'], loci['id'], loci['pos'], loci['major'], loci['minor']]
     for aped in ped:
         psnp1 = loci[aped[0]]
         psnp2 = loci[aped[1]]
@@ -287,7 +221,7 @@ def impute_write(ped=[], dsnp=[], mode=0):
     if args['header'] == "yes":
         outfile.write('ID' + '\t')
         for loci in dsnp:
-            outfile.write('\t'.join(loci['snpid']) +'\n')
+            outfile.write('\t'.join(loci['id']) +'\n')
     
     if mode == 0:
         for aped in ped:
@@ -339,7 +273,54 @@ def write_pheno(mode=0):
     return outpheno    
           
     
+def version():
+    v = """
+################################################################################
+ impute4diallel version 0.2
+ Jinliang Yang
+ updated: July.12.2013
+ changes: input changed to sdf
+ --------------------------------
 
+ SNP Imputation for diallel!
+################################################################################
+"""
+    return v
+
+def get_parser():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent(version())
+        )
+
+    # positional arguments:
+    #parser.add_argument('query', metavar='QUERY', type=str, nargs='*', \
+    #                    help='the question to answer')
+
+    # optional arguments:
+    parser.add_argument('-p', '--path', help='the path of the input files', \
+                        nargs='?', default=os.getcwd())
+    parser.add_argument('-d','--ped', help='pedigree of the F1 (header: nm, p1, p2)', type=str)
+    parser.add_argument('--dsnp', help='path of the density SNP file', type=str)
+    parser.add_argument('-s', '--start', help='start column number of the founder lines \
+                        [defult: --start=4]', default=4, type=int)
+    parser.add_argument('-e', '--end', help='end column number of the founder lines \
+                        [defult: --end=31]', default=31, type=int)
+    parser.add_argument('--header', help='print header or not [default: --header=no]', type=str,
+                        choices=['yes','no'], default='no')
+
+    parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
+    parser.add_argument('-m','--mode',
+                        help='''[default --mode=0];
+                        0, for GenSel;
+                        1, for PLINK;
+                        2, for SNPTEST;
+                        3, for raw;
+                        ''',
+                        choices=[0,1,2,3], default=0, type=int)
+    return parser
+    #parser = get_parser()
+    #parser.print_help()
 
 
 ##########################################################################################

@@ -10,7 +10,7 @@ import os
 def version():
     v1 = """
     ##########################################################################################
-    snpfrq version 0.1.0
+    snpfrq version 0.2.0
     Jinliang Yang
     updated: Oct.24.2013
     --------------------------------
@@ -314,18 +314,14 @@ def write_pheno(mode=0):
     
 
 
+if __name__ == '__main__':
+    parser = get_parser()
+    args = vars(parser.parse_args())
 
-##########################################################################################
-'''
-main
-'''
-parser = get_parser()
-args = vars(parser.parse_args())
-
-if args['diallel'] or args['dsnp'] is not None:
-    print(version())
-if args['path'] is not None:
-    os.chdir(args['path'])
+    if args['diallel'] or args['dsnp'] is not None:
+        print(version())
+    if args['path'] is not None:
+        os.chdir(args['path'])
 
 ##### read in the pedigree file ######
 st = timeit.default_timer()
@@ -365,6 +361,7 @@ et = timeit.default_timer()
 
 print("[ ", "%.0f" % (et - st)/60, " ] minutes of run time!")
 print("imputation finsihed!")
+
 
 
 

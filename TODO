@@ -1,3 +1,18 @@
+#June 19th, 2014
+=================
+snp3merge.py
+
+define density SNP format
+
+
+snp_frq.py: to allow output SNP info table
+
+
+
+
+
+###################################################
+# updates
 #Oct 8th, 2013
 snp3merge.py
 =================
@@ -8,8 +23,17 @@ Indel merge need to be improved:
 
 impute4diallel.py
 =================
+to do: change the output to oneline on screen!
 
-snp_frq_missing.py
+
+
+snp_frq_v2.0.py
 =================
+tested for SAM data!
+
+dsnp2GWAS.py
+================
+v.1.0: 7.10.2014 passed an R code test with SAM1000 testing data
+v.0.1: 7.9.2014 create the code
 
 
