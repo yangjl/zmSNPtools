@@ -1,20 +1,51 @@
 zmSNPtools
 ==========
 
-A collection of codes designed to process a range of basic, \
-large-scale analyzes for SNPs of maize diversity panel.
+A collection of python codes designed to process a range of basic, \
+large-scale analyses for SNPs of maize diversity panel.
 
 Usage:
 =========
-Copy the python files to the directory in your $PATH:
+Copy the piece of python code to the directory in your $PATH:
 for example:
 ```
 $: cp impute4diallel/impute4diallel.py ~/bin/impute4diallel
-$: impute4diallel -h
+
+```
+Then, you will be ready to run it
+```
+$: impute4diallel -help
 ```
 
-Overview
+Description
 =========
+### fpSNP
+find a set of population specific fingerprint SNPs
+
+## update of the program
+10/3/2014: v0.1 python code tested with a small set of simulated data
+
+## usage:
+
+```
+git clone git@github.com:yangjl/zmSNPtools.git
+cp zmSNPtools/packages/fpSNP/fpSNP_v0.1.py ~/bin/fpSNP
+export PATH=$PATH:~/bin/
+fpSNP -h
+
+```
+
+
+
+### impute4diallel
+SNP Imputation for maize diallel population from parental SNP panel to F1 hybrids.
+
+### dsf2GWAS
+transform density SNP format (DSF) to GWAS (gensel4.2 supported) and other formats
+
+### 
+
+
 
 
 Update
