@@ -11,14 +11,18 @@ import os
 def version():
     v0 = """
     ##########################################################################################
-    snpfrq version 2.0
+    snpfrq version 2.1
     Jinliang Yang
     updated: July.5.2014, for SAM SNPs
     --------------------------------
+    compute SNP frq and loci missing rate from 'dsf' format
+    Note: dsf can either be 'dsf2' starting with [chr, pos] or 'dsf3' [snpid, chr, pos]
+    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.dsf -s 5 -e 31 -m "-N+" -a 0 -b 1 -o test.out
 
-    new feature: support multiple missing codes
-    new feature: add maf and missingness filtration!
-    compute SNP frq and loci missing rate from DSF
+    --------------------------------
+    new feature: 1. support multiple missing codes
+    new feature: 2. add maf and missingness filtration!
+
     ##########################################################################################
     """
     return v0
@@ -42,7 +46,7 @@ def readfile_and_process(infile_name, outfile_name):
         line2 = infile.readline()
         line2array = line2.split()
         if(len(str(line2array[start])) != 1):
-            warning("SNP should be coded with one latter, like:'A T C G or - +'!")
+            warning("SNP should be coded with one letter, like:'A T C G or - +'!")
 
     myout = args['output'].split('.')[0]
     myout = ".".join([myout, "flt"])
@@ -56,7 +60,13 @@ def readfile_and_process(infile_name, outfile_name):
 
         for line in infile:
             tokens = line.split()
-            tokens = ["N" if x== args['missingcode'] else x for x in tokens]
+
+            ### change the missing code to N
+            mcode = args['missingcode'].split()
+            for amcode in mcode:
+                tokens = ["N" if x== amcode else x for x in tokens]
+
+            ### get information for each locus
             out = get_loci_info(tokens)
 
             ### print out the results
@@ -144,7 +154,7 @@ def get_parser():
     parser.add_argument('-i','--input', help='input file', type=str)
     parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int)
     parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
-    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="--")
+    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="-N")
     parser.add_argument('-a','--maf', help='cutoff of minor allele freq', type=float, default=0)
     parser.add_argument('-b','--mr', help='cutoff of missing rate', type=float, default=1)
 
