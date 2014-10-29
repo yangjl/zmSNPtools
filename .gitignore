@@ -40,3 +40,4 @@ test/
 .Trashes
 ehthumbs.db
 Thumbs.db
+*test*

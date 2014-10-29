@@ -62,7 +62,7 @@ def readfile_and_process(infile_name, outfile_name):
             tokens = line.split()
 
             ### change the missing code to N
-            mcode = args['missingcode'].split()
+            mcode = list(args['missingcode'])
             for amcode in mcode:
                 tokens = ["N" if x== amcode else x for x in tokens]
 
