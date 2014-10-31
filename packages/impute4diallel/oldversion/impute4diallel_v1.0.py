@@ -214,19 +214,19 @@ def impute_write(ped=[], dsnp=[], mode=0):
     
     outfile = open(output, 'w')
     if args['header'] == "yes":
-        outfile.write('ID')
+        outfile.write('snpid')
         for loci in dsnp:
             outfile.write('\t' + loci['snpid'])
         outfile.write('\n')
     
     if mode == 0:
         for aped in ped:
-            print("impute:", len(dsnp), " SNPs at mode=gensel for [ ", aped[2], " ]", "\r")
+            print("\r", "impute:", len(dsnp), " SNPs at mode=gensel for [ ", aped[2], " ]")
             imputesnp = impute_gensel(aped=aped, dsnp=dsnp)
             outfile.write(aped[2] + '\t' + '\t'.join(imputesnp) + '\n')
     if mode == 1:
         for aped in ped:
-            print("impute:", len(dsnp), " SNPs at mode=plink for [ ", aped[2], " ]", "\r")
+            print("\r", "impute:", len(dsnp), " SNPs at mode=plink for [ ", aped[2], " ]")
             imputesnp = impute_plink(aped=aped, dsnp=dsnp)
             outfile.write('\t'.join([aped[2],'1','0','0','1','0']) + "\t")
             outfile.write('\t'.join(imputesnp) + '\n')
@@ -271,10 +271,10 @@ def write_pheno(mode=0):
 def version():
     v = """
 ################################################################################
- impute4diallel version 0.3
+ impute4diallel version 1.0
  Jinliang Yang
  updated: July.12.2013
- changes: input changed to sdf
+ changes: R codes tested for GenSel output! input changed to sdf
  --------------------------------
 
  SNP Imputation for diallel!
@@ -331,6 +331,7 @@ if __name__ == '__main__':
 
     ##### read in the pedigree file ######
     st = timeit.default_timer()
+
     print("Reading pedigree (F1) file ...")
     ped = readPed(pedfile=args['diallel'])
     print("[ ", len(ped), " ] F1 of diallels loaded.")
@@ -338,6 +339,8 @@ if __name__ == '__main__':
     ##### read in the density snp file ######
     start = args['start'] - 1 #6
     end = args['end'] #385
+    print("Checking dsf file ...")
+    checkFile(args['dsf'])
     print("Reading density SNP file ...")
     dsnp = readLofD(infile_name = args['dsf'])
     print("[ ", len(dsnp), " ] SNPs loaded from [ ", end-start, " ] founders!")
@@ -355,6 +358,7 @@ if __name__ == '__main__':
     et = timeit.default_timer()
     print("[ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
     print("Imputation finsihed!")
+
 
 
 

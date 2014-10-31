@@ -20,8 +20,8 @@ def checkFile(infile_name):
         ### check the first line
         line1 = infile.readline()
         line1a = line1.split()
-        if(line1a[0] != "snpid" or line1a[1] != "major" or line1a[2] != "minor"):
-            warning("snpid major and minor should be the first three columns in the header")
+        if(line1a[0] != "snpid" or line1a[1] != "chr" or line1a[2] != "pos" or line1a[3] != "major" or line1a[4] != "minor"):
+            warning("[dsf5 required] snpid, chr, pos, major and minor should be the first five columns in the header")
         else:
             print("input file header OK!")
 
@@ -70,7 +70,7 @@ def impute_raw(loci=[], ped=[]):
     '''
     raw type
     '''
-    mysnp = [loci['chr'], loci['id'], loci['pos']]
+    mysnp = [loci['chr'], loci['snpid'], loci['pos']]
     for aped in ped:
         psnp1 = loci[aped[0]]
         psnp2 = loci[aped[1]]
@@ -98,7 +98,7 @@ def impute_raw(loci=[], ped=[]):
         elif psnp1 == "N" and psnp2 == "N":
             mysnp.append('\t'.join(['N', 'N']))
         else:
-            warnings(loci['id'], "have gensel imputation error!!!")
+            warnings(loci['snpid'], "have gensel imputation error!!!")
     return mysnp   
 
     
@@ -133,7 +133,7 @@ def impute_gensel(aped=[], dsnp=[]):
         elif psnp1 == "N" and psnp2 == "N":
             mysnp.append('0')
         else:
-            warning(loci['id'], "have gensel imputation error!!!")
+            warning(loci['snpid'], "have gensel imputation error!!!")
     return mysnp
 
 
@@ -169,7 +169,7 @@ def impute_plink(aped=[], dsnp=[]):
         elif psnp1 == "N" and psnp2 == "N":
             mysnp.append('0 0')
         else:
-            warning(loci['id'],psnp1, psnp2, "have plink imputation error!!!")
+            warning(loci['snpid'],psnp1, psnp2, "have plink imputation error!!!")
     return mysnp
     
 def impute_snptest(loci=[], ped=[]):
@@ -178,7 +178,7 @@ def impute_snptest(loci=[], ped=[]):
     The next three numbers on the line should be the probabilities of the three 
     genotypes AA, AB and BB at the SNP for the first individual in the cohort
     '''
-    mysnp = [loci['chr'], loci['id'], loci['pos'], loci['major'], loci['minor']]
+    mysnp = [loci['chr'], loci['snpid'], loci['pos'], loci['major'], loci['minor']]
     for aped in ped:
         psnp1 = loci[aped[0]]
         psnp2 = loci[aped[1]]
@@ -206,7 +206,7 @@ def impute_snptest(loci=[], ped=[]):
         elif psnp1 == "N" and psnp2 == "N":
             mysnp.append('0 0 0')
         else:
-            warnings(loci['id'], "have gensel imputation error!!!")
+            warnings(loci['snpid'], "have gensel imputation error!!!")
     return mysnp     
     
 ##########################################################################################            
@@ -358,6 +358,7 @@ if __name__ == '__main__':
     et = timeit.default_timer()
     print("[ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
     print("Imputation finsihed!")
+
 
 
 
