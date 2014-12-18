@@ -36,7 +36,11 @@ fpSNP -h
 
 ```
 
+### gerpIBD
+Compute the GERP score in a given IBM regions across different genotypes.
 
+## update of the program
+12/17/2014: beta version for testing run
 
 ### impute4diallel
 SNP Imputation for maize diallel population from parental SNP panel to F1 hybrids.
