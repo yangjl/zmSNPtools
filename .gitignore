@@ -11,6 +11,7 @@
 test/
 #MyPack/
 .idea/
+bin/
 
 # Packages #
 ############
