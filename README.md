@@ -31,6 +31,7 @@ find a set of population specific fingerprint SNPs
 git clone git@github.com:yangjl/zmSNPtools.git
 cd to/your/path
 cp zmSNPtools/packages/fpSNP/fpSNP_v0.1.py zmSNPtools/bin/fpSNP
+chmod +x zmSNPtools/bin/fpSNP
 export PATH=$PATH:full/path/of/zmSNPtools/bin/
 fpSNP -h
 
