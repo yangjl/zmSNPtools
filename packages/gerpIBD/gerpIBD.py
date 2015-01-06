@@ -159,28 +159,29 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   gerpa1 = np.round(gerpa1, 0)
   gerpa1 = gerpa1.transpose() 
   gerpa1.insert(0, "ibdid", gerpa1.index)
-  gerpa1.to_csv("_".join([outbase, "a1.gs"]), sep="\t", index=True, index_label=False)
+  #nm1 = list(gerpa1.columns.values)
+  gerpa1.to_csv("_".join([outbase, "a1.gs"]), sep="\t", header=True, index=False, index_label=False)
 
   gerpa2 = hashres["gerpa2"]
   gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
-  gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", index=True, index_label=False)
+  gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd1 = hashres["gerpd1"]
   gerpd1 = gerpd1.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd1 = np.round(gerpd1, 0)
   gerpd1 = gerpd1.transpose()
   gerpd1.insert(0, "ibdid", gerpd1.index)
-  gerpd1.to_csv("_".join([outbase, "d1.gs"]), sep="\t", index=True, index_label=False)
+  gerpd1.to_csv("_".join([outbase, "d1.gs"]), sep="\t", header=True, index=False, index_label=False)
 
   gerpd2 = hashres["gerpd2"]
   gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
-  gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", index=True, index_label=False)
+  gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 def version():
     ver0 = """
