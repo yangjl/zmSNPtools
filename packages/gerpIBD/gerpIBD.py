@@ -33,7 +33,8 @@ def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed",
   #len(ibd0)
   #Out[16]: 85388
 
-  ### GERP>0 merged with dsf7
+  ### GERP>0 merged with dsf7, dsf7 without B73 missing!
+  dsf7 = dsf7[dsf7['B73'] != 'N']
   ibddsf = pd.merge(snp0, dsf7.iloc[:,np.r_[0, 7:19]], on="snpid", sort=False, how="inner")
   return ibddsf
 
@@ -48,7 +49,7 @@ def getPed(ibddsf):
   ped.loc[:, 'F1'] = ped['P1'] + "x" + ped['P2']
   return ped
   
-### compute GERP in additive mode  
+### compute GERP score in a given IBD block  
 def ComputeOneGroup(onegroup):
   # gerp1a/gerp1d: gerp complementation
   # gerp2a/gerp2d: sum of gerp value
@@ -73,8 +74,8 @@ def ComputeOneGroup(onegroup):
       elif onesnp[p1] == "N" and onesnp[p2] == b73:
         gerp1a = gerp1a + 1.5
         gerp2a = gerp2a + onesnp["RS"]*1.5
-        gerp1d = gerp1d + 0.5
-        gerp2d = gerp2d + onesnp["RS"]*0.5
+        gerp1d = gerp1d + 1
+        gerp2d = gerp2d + onesnp["RS"]
           
       elif onesnp[p1] == b73 and (onesnp[p2] != b73 and onesnp[p2] != "N"):
         gerp1a = gerp1a + 1
@@ -109,6 +110,12 @@ def ComputeOneGroup(onegroup):
         gerp2d = gerp2d + onesnp["RS"]
       else:
         warnings(onesnp["snpid"], "for", p1, p2, "have problem for additive imputation!")
+    # for cases that B73==N
+    else:
+      gerp1a = gerp1a + 0
+      gerp2a = gerp2a + 0
+      gerp1d = gerp1d + 0
+      gerp2d = gerp2d + 0
     gres = {'gerp1a': gerp1a, 'gerp2a': gerp2a, "gerp1d": gerp1d, "gerp2d": gerp2d}  
   return pd.Series(gres, name='metrics')
   
