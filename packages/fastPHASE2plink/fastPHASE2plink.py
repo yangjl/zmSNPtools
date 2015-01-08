@@ -1,13 +1,137 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import pandas as pd
-import numpy as np
+from __future__ import division
 import sys
 import argparse
 import textwrap
 import timeit
 import os
+
+###############################
+def readfile(infile_name="Land_hapguess_swith.out"):
+
+    with open(infile_name, 'r') as infile:
+      data = {}
+      nline = -9
+      for line in infile:
+        line = line.strip()
+        if not line: continue
+        if line.startswith("BEGIN GENOTYPES"):
+          nline = 0
+          continue
+        if line.startswith("END GENOTYPES"):
+          # define global variable `snpnum`
+          snpnum = len(data[snpid][0].split())
+          print ">>> loaded", len(data),  "individuals with", snpnum, "SNPs!"
+          return data
+        if nline >= 0 and nline % 3 == 0:
+          data[line] = []
+          snpid = line
+          nline += 1
+        elif nline >= 0 and nline % 3 != 0:
+          data[snpid].append(line)
+          nline += 1
+
+test = readfile(infile_name="largedata/fphase/Parv_hapguess_switch.out")  
+
+#A text file with no header line, and one line per individual with the following six fields:
+#1.Individual's family ID ('FID')
+#2.Individual's within-family ID ('IID'; cannot be '0')
+#3.Within-family ID of father ('0' if father isn't in dataset)
+#4.Within-family ID of mother ('0' if mother isn't in dataset)
+#5.Sex code ('1' = male, '2' = female, '0' = unknown)
+#6.Phenotype value ('1' = control, '2' = case, '-9'/'0'/non-numeric = missing data if case/control)
+
+def writePed(data, outfile="largedata/fphase/test.out"):
+  
+  with open(outfile, "w") as outfile:
+    for keys,values in data.items():
+      outfile.write("\t".join([fid, keys, '0', '0', '0', '0'])) 
+      hap1 = values[0].split()
+      hap2 = values[1].split()
+      for i in range(len(hap1)):
+        outfile.write("\t" + "\t".join([hap1[i], hap2[i]]) )
+      outfile.write("\n")
+  
+writePed(data=test, outfile="largedata/fphase/test.out")
+
+### recycle this function from snpfrq
+def get_loci_info(tokens):
+
+    snptokens = tokens
+    set0 = set(snptokens)
+    if 'N' in set0:
+        set0.remove('N')
+    snpset = list(set0)
+        
+    info = {}
+    if len(snpset) != 2:
+      print "WARNING: ", "!=2 alleles !!!"
+      sys.exit()
+    elif len(snpset) == 2:
+        c1 = snptokens.count(snpset[0])
+        c2 = snptokens.count(snpset[1])
+   
+        if c1 >= c2:
+            info['major'] = snpset[0]
+            info['minor'] = snpset[1]
+            info['maf'] = round(c2/(c1+c2),3)
+        else:
+            info['major'] = snpset[1]
+            info['minor'] = snpset[0]
+            info['maf'] = round(c1/(c1+c2),3)
+        info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens),3)
+
+    return info
+
+
+dtest = {'ind1':['A T C', 'C G A'], 
+"ind2":['C T A', 'C G C'],
+"ind3":['C T A', 'C G C']}
+
+def transposeDofL(data):
+  allhap = []
+  for values in data.values():
+    allhap.append(values[0].split())
+    allhap.append(values[1].split())
+  allsnp = map(list, zip(*allhap))
+  
+  snpinfo = []
+  for i in range(len(allsnp)):
+    snpinfo.append(get_loci_info(allsnp[i]))
+  return snpinfo
+
+res = transposeDofL(dtest)
+
+
+#Genotype files for one chromosome in phased-EIGENSTRAT format (1 line per SNP): 
+#Specified using parameters REFPOP1GENOFILE, REFPOP2GENOFILE
+#Examples are CEUgenofile.22 and YRIgenofile.22
+#Each line contains 2 columns per individual (00 or 01 or 10 or 11) 
+#corresponding to the 1st and 2nd phased haplotype respectively.
+#  e.g. for 4 samples and 2 SNPs we could have:
+# 01110000
+# 01000100
+
+### determining minor and major alleles
+def writeHAPMIX(data, snpinfo):
+  
+  for values in data.values():
+    hap1 = values[0].split()
+    hap2 = values[1].split()
+  onesnp.extend([ hap1[i], hap2[i] ])
+  
+  for i in range(snpnum):
+    onesnp = []
+    
+    allsnp.append(onesnp)
+  return allsnp
+
+test2 = writeHAPMIX(data=test, outfile="largedata/fphase/test.hapmix")
+
+
+
 
 def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed", 
              gerpfile="largedata/SNP/allsnps_11m_gerpv2_tidy.csv", 
@@ -193,9 +317,9 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.2
+    fastPHASE2other version 0.1
     Author: Jinliang Yang
-    purpose: compute the accumulative GERP rate in an IBD region
+    purpose: conversion fastPHASE to other formats
     --------------------------------
 
     updated: 1/7/2014
@@ -203,9 +327,9 @@ def version():
     """
     return ver0
 
-def warning(*objs):
-    print("WARNING: ", *objs, end='\n', file=sys.stderr)
-    sys.exit()
+#def warning(*objs):
+#    print("WARNING: ", *objs, end='\n', file=sys.stderr)
+#    sys.exit()
 
 ##########################################################################################
 def get_parser():
