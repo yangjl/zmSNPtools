@@ -32,7 +32,7 @@ def readfile(infile="largedata/fphase/fastphase_hapguess_swith.out"):
           data[snpid].append(line)
           nline += 1
 
-
+# df = readfile(infile="land_94_chr10_hapguess_switch.out")
 
 #A text file with no header line, and one line per individual with the following six fields:
 #1.Individual's family ID ('FID')
@@ -53,7 +53,7 @@ def writePed(data, outfile="largedata/fphase/test.out"):
         outfile.write("\t" + "\t".join([hap1[i], hap2[i]]) )
       outfile.write("\n")
   
-writePed(data=test, outfile="largedata/fphase/test.out")
+#writePed(data=test, outfile="largedata/fphase/test.out")
 
 ### recycled this function from snpfrq
 ### Note: missing data should change to N, or imputed
@@ -66,8 +66,8 @@ def get_loci_info(tokens):
     snpset = list(set0)
         
     info = {}
-    if len(snpset) != 2:
-      print "WARNING: ", "!=2 alleles !!!"
+    if len(snpset) > 2:
+      print "WARNING: ", "!=2 alleles !!!", snpset
       sys.exit()
     elif len(snpset) == 2:
         c1 = snptokens.count(snpset[0])
@@ -97,8 +97,6 @@ def transposeDofL(data):
   return snptable
 
 
-
-
 #Genotype files for one chromosome in phased-EIGENSTRAT format (1 line per SNP): 
 #Specified using parameters REFPOP1GENOFILE, REFPOP2GENOFILE
 #Examples are CEUgenofile.22 and YRIgenofile.22
@@ -125,7 +123,7 @@ def getHAPMIX(snps, snpinfo):
     hapmixout.append(hapmix)  
   return hapmixout
 
-getHAPMIX(res["allsnp"], snpinfo)
+#getHAPMIX(res["allsnp"], snpinfo)
 ### determining minor and major alleles
 def writeHAPMIX(hapmixout,  outfile="test.out"):
   with open(outfile, "w") as outfile:
@@ -133,13 +131,13 @@ def writeHAPMIX(hapmixout,  outfile="test.out"):
       outfile.write("".join(onesnp) + "\n")
   
 
-test2 = writeHAPMIX(data=test, outfile="largedata/fphase/test.hapmix")
+#test2 = writeHAPMIX(data=test, outfile="largedata/fphase/test.hapmix")
 
 
 
 def main():
   #### read data into dict
-  data = readfile(infile_name="largedata/fphase/fastphase_hapguess_swith.out")
+  data = readfile(infile="land_94_chr10_hapguess_switch.out")
   #### get two forms of the data
   #### res['allhap'] and res['allsnp']
   res = transposeDofL(data)
@@ -171,12 +169,12 @@ def main():
 def version():
     ver0 = """
     ##########################################################################################
-    fastPHASE2other version 0.1
+    fastPHASE2others version 0.2
     Author: Jinliang Yang
     purpose: convert fastPHASE to other formats
     --------------------------------
 
-    updated: 1/7/2014
+    updated: Jan. 21st, 2015
     ##########################################################################################
     """
     return ver0
