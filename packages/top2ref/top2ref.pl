@@ -120,7 +120,7 @@ sub create_map
         my @als = grep { $_ ne 'N' } split(/,/,$3);
         if ( @als != 2 ) { error("Expected two alleles, got [$3] at $chr:$pos"); }
         my $strand = topbot_strand($refseq,$chr,$pos,@als);
-        if ( !$strand ) { error("Could not determine strand at $chr:$pos"); }
+        if ( !$strand ) { $strand = 0; }
         print "$chr\t$pos\t",join(',',@als),"\t$strand\n";
     }
 }
