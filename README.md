@@ -1,7 +1,7 @@
 zmSNPtools
 ==========
 
-A collection of python codes designed to process a range of basic, \
+A collection of python, perl and R codes designed to process a range of basic, \
 large-scale analyses for SNPs of maize diversity panel.
 
 Usage:
@@ -14,6 +14,7 @@ $: cp impute4diallel/impute4diallel.py ~/bin/impute4diallel
 ```
 Then, you will be ready to run it
 ```
+# to find the help:
 $: impute4diallel -help
 ```
 
@@ -49,7 +50,18 @@ SNP Imputation for maize diallel population from parental SNP panel to F1 hybrid
 ## dsf2GWAS
 transform density SNP format (DSF) to GWAS (gensel4.2 supported) and other formats
 
-#### 
+## top2ref.pl
+translate illumina top/bot SNP call to ref/alt based on the reference genome.
+#### usage:
+```
+##cloned from: https://github.com/VertebrateResequencing/vr-codebase
+##The overall codebase developed and used by the Vertebrate Resequencing group at the Sanger Institute
+# added perl module
+export PERL5LIB=$PERL5LIB:~/Documents/Github/zmSNPtools/modules
+```
+
+
+
 
 
 
