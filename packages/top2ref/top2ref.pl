@@ -124,7 +124,7 @@ sub create_map
         
         ### get ref_base
         my $ref_base  = $refseq->get_base($chr,$pos);
-        print "$chr\t$pos\t",join(',',@als),"\t$strand\n", "\t$ref_base";
+        print "$chr\t$pos\t",join(',',@als),"\t$strand", "\t$ref_base\n";
     }
 }
 
