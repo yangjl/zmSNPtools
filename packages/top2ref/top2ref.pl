@@ -121,7 +121,10 @@ sub create_map
         if ( @als != 2 ) { error("Expected two alleles, got [$3] at $chr:$pos"); }
         my $strand = topbot_strand($refseq,$chr,$pos,@als);
         if ( !$strand ) { $strand = 0; }
-        print "$chr\t$pos\t",join(',',@als),"\t$strand\n";
+        
+        ### get ref_base
+        my $ref_base  = $refseq->get_base($chr,$pos);
+        print "$chr\t$pos\t",join(',',@als),"\t$strand\n", "\t$ref_base";
     }
 }
 
