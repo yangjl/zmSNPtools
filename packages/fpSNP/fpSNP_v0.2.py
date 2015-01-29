@@ -11,11 +11,12 @@ import os
 def version():
     ver0 = """
     ##########################################################################################
-    fpSNP version 0.1
+    fpSNP version 0.2
     Author: Jinliang Yang
     purpose: find a set of population specific fingerprint SNPs
     --------------------------------
 
+    updated: 1/28/2015, run for US GBS data
     updated: 10/2/2014, first piece of the code
     ##########################################################################################
     """
@@ -74,7 +75,7 @@ def readfile_and_process(infile_snp):
         groups = list(set0)
         #print(groups)
         if(len(groups) !=2):
-            warning("oops, you have more than two groups")
+            warning("Oops, you have more than two groups")
         else:
             idx1 = [i for i, j in enumerate(line2a) if j == groups[0]]
             #print(idx1)
@@ -85,11 +86,11 @@ def readfile_and_process(infile_snp):
             tokens = line.split()
             tokens = ["N" if x== args['missingcode'] else x for x in tokens]
             out = get_loci_info(tokens, idx= range(3,len(tokens)), MA="N")
-
-            out1 = get_loci_info(tokens, idx = idx1, MA = out['minor'])
-
-            out2 = get_loci_info(tokens, idx = idx2, MA = out['minor'])
-            snpmaf.append([tokens[0], tokens[1], tokens[2], out['major'],out['minor'], out['maf'], out['missing'],
+            
+            if 'minor' in out:
+                out1 = get_loci_info(tokens, idx = idx1, MA = out['minor'])
+                out2 = get_loci_info(tokens, idx = idx2, MA = out['minor'])
+                snpmaf.append([tokens[0], tokens[1], tokens[2], out['major'],out['minor'], out['maf'], out['missing'],
                            out1['maf'],out1['missing'], out2['maf'], out2['missing']])
 #readfile_and_process(f)
 
