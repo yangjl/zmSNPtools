@@ -58,6 +58,12 @@ translate illumina top/bot SNP call to ref/alt based on the reference genome.
 ##The overall codebase developed and used by the Vertebrate Resequencing group at the Sanger Institute
 # added perl module
 export PERL5LIB=$PERL5LIB:~/Documents/Github/zmSNPtools/modules
+cp packages/top2ref/top2ref.pl bin/top2ref
+# use samtools to index reference genome in fasta format
+sed -i -- 's/chromosome:AGPv2:.*chromosome /chr/g' ZmB73_RefGen_v2.fasta
+samtools faidx ZmB73_RefGen_v2.fasta
+
+cat snps.top | topbot-to-fwd-strand -r ref.fa > snps.map 
 ```
 
 
