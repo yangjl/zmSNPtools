@@ -11,7 +11,8 @@ import os
 
 def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed", 
              gerpfile="largedata/SNP/allsnps_11m_gerpv2_tidy.csv", 
-             dsffile="largedata/SNP/allsnps_11m.dsf5"):
+             dsffile="largedata/SNP/allsnps_11m.dsf5",
+             gerppositive="positive"):
   ### read.table
   snpibd = pd.read_table(bedfile, sep="\t", header= None)
   gerp = pd.read_csv(gerpfile)
@@ -26,7 +27,10 @@ def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed",
 
   ### merge SNPs with positive GERP score
   snpibd = pd.merge(snpibd, gerp[["snpid", "RS"]], on='snpid', sort=False, how='inner')
-  snp0 = snpibd[snpibd['RS']>0]
+  if gerppositive == "positive":
+    snp0 = snpibd[snpibd['RS']>0]
+  else:
+    snp0 = snpibd
 
   ###
   ibd0 = snp0.groupby('ibdid').size()
@@ -193,12 +197,12 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.2
+    gerpIBD version 0.3
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
 
-    updated: 1/7/2014
+    updated: 2/22/2014, do negative gerp
     ##########################################################################################
     """
     return ver0
@@ -223,6 +227,7 @@ def get_parser():
   parser.add_argument('-d','--ibd', help='IBD region in BED6 format', default="largedata/IBD/allsnps_11m_IBD.bed",  type=str)
   parser.add_argument('-s','--snp', help='founder SNP type in DSF5 format', default="largedata/SNP/allsnps_11m.dsf5",  type=str)
   parser.add_argument('-g','--gerp', help='gerp rates in csv format', default='largedata/SNP/allsnps_11m_gerpv2_tidy.csv', type=str)
+  parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
   parser.add_argument('-o', '--output', help='base of the output file', default='gerpIBD_output', type=str)
   return parser
   #parser = get_parser()
@@ -240,7 +245,8 @@ def main():
      os.chdir(args['path'])
   ibddsf = readData(bedfile=args['ibd'], 
                     gerpfile=args["gerp"], 
-                    dsffile=args['snp'])
+                    dsffile=args['snp'],
+                    gerppositive=args['num'])
   print(">>> generating pedigree info")
   ### get ped info from names of idbdsf object
   ped = getPed(ibddsf)
