@@ -16,7 +16,7 @@ def version():
     updated: April 8th, 2015, for SAM SNPs
     --------------------------------
     compute SNP frq and loci missing rate from 'BED+' format
-    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.bed -s 5 -m "-N+" -a 0 -b 1 -o test.out
+    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.bed -s 5 -m "-N+" -a 0 -b 1 -c 2 -o test.out
 
     --------------------------------
     new feature: 1. support multiple missing codes
@@ -53,9 +53,15 @@ def readfile_and_process(infile_name, outfile_name):
 
         line1 = infile.readline()
         line1data = line1.split()
+        
+        
+        if args['outmode'] == 1:
+            outfile.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:])  + "\n")
+            outfile2.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:]) + "\n")
+        elif args['outmode'] == 2:
+            outfile.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\n")
+            outfile2.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\n")
 
-        outfile.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:end])  + "\n")
-        outfile2.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:end]) + "\n")
 
         for line in infile:
             tokens = line.split()
@@ -70,22 +76,29 @@ def readfile_and_process(infile_name, outfile_name):
 
             ### print out the results
             if out:
-                if wtype == 1:
+                if wtype == 1 and args['outmode'] == 1:
                     if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
                         outfile.write("\t".join([ tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing']) ]) + \
-                          "\t" + "\t".join(tokens[start:end]) + "\n")
+                          "\t" + "\t".join(tokens[start:]) + "\n")
                     else:
                         outfile2.write("\t".join([tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + "\t" \
-                           + "\t".join(tokens[start:end]) + "\n")
+                           + "\t".join(tokens[start:]) + "\n")
+                if wtype == 1 and args['outmode'] == 2:
+                    if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
+                        outfile.write("\t".join([ tokens[3], out['major'], out['minor'], str(out['maf']), \
+                        str(out['missing']) ]) + "\n")
+                    else:
+                        outfile2.write("\t".join([tokens[3], out['major'], out['minor'], str(out['maf']), \
+                        str(out['missing'])]) + "\n")           
                 elif wtype == 2:
                     if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
                         outfile.write("_".join([ tokens[0],tokens[1] ]) + "\t" + \
                           "\t".join([out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + \
-                          "\t" + "\t".join(tokens[start:end]) + "\n")
+                          "\t" + "\t".join(tokens[start:]) + "\n")
                     else:
                         outfile2.write("_".join([ tokens[0],tokens[1] ]) + "\t" + \
                            "\t".join([out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + \
-                           "\t" + "\t".join(tokens[start:end]) + "\n")
+                           "\t" + "\t".join(tokens[start:]) + "\n")
 
 
 def write_prob_snp():
@@ -156,8 +169,7 @@ def get_parser():
     parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
     parser.add_argument('-a','--maf', help='cutoff of minor allele freq', type=float, default=0)
     parser.add_argument('-b','--mr', help='cutoff of missing rate', type=float, default=1)
-
-
+    parser.add_argument('-c','--outmode', help='mode of output', type=float, default=2)
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
 
     return parser
