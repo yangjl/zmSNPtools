@@ -13,11 +13,10 @@ def version():
     ##########################################################################################
     snpfrq version 2.1
     Jinliang Yang
-    updated: July.5.2014, for SAM SNPs
+    updated: April 8th, 2015, for SAM SNPs
     --------------------------------
-    compute SNP frq and loci missing rate from 'dsf' format
-    Note: dsf can either be 'dsf2' starting with [chr, pos] or 'dsf3' [snpid, chr, pos]
-    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.dsf -s 5 -e 31 -m "-N+" -a 0 -b 1 -o test.out
+    compute SNP frq and loci missing rate from 'BED+' format
+    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.bed -s 5 -m "-N+" -a 0 -b 1 -o test.out
 
     --------------------------------
     new feature: 1. support multiple missing codes
@@ -38,15 +37,15 @@ def readfile_and_process(infile_name, outfile_name):
     
         line1 = infile.readline()
         line1array = line1.split()
-        if(line1array[0] == "snpid"):
+        if(line1array[3] == "snpid"):
             wtype = 1
         elif(line1array[0] == "chr" and line1array[1] == "pos"):
             wtype = 2
 
         line2 = infile.readline()
         line2array = line2.split()
-        if(len(str(line2array[start])) != 1):
-            warning("SNP should be coded with one letter, like:'A T C G or - +'!")
+        if(len(str(line2array[start])) != 1 and len(str(line2array[start])) != 3):
+            warning("SNP should be coded with one letter, like:'A T C G or - +'!" or 'A A, T T, ...')
 
     myout = args['output'].split('.')[0]
     myout = ".".join([myout, "flt"])
@@ -73,10 +72,10 @@ def readfile_and_process(infile_name, outfile_name):
             if out:
                 if wtype == 1:
                     if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
-                        outfile.write("\t".join([ tokens[0], out['major'], out['minor'], str(out['maf']), str(out['missing']) ]) + \
+                        outfile.write("\t".join([ tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing']) ]) + \
                           "\t" + "\t".join(tokens[start:end]) + "\n")
                     else:
-                        outfile2.write("\t".join([tokens[0], out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + "\t" \
+                        outfile2.write("\t".join([tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + "\t" \
                            + "\t".join(tokens[start:end]) + "\n")
                 elif wtype == 2:
                     if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
@@ -108,7 +107,7 @@ def write_prob_snp():
 
 def get_loci_info(tokens):
 
-    snptokens = tokens[start:end]
+    snptokens = tokens[start:]
     set0 = set(snptokens)
     if 'N' in set0:
         set0.remove('N')
@@ -153,8 +152,8 @@ def get_parser():
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='input file', type=str)
     parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int)
-    parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
-    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="-N")
+    #parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
+    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
     parser.add_argument('-a','--maf', help='cutoff of minor allele freq', type=float, default=0)
     parser.add_argument('-b','--mr', help='cutoff of missing rate', type=float, default=1)
 
@@ -181,7 +180,7 @@ if __name__ == '__main__':
     print("Reading and writing SNP info ...")
 
     start = args['start'] -1
-    end = args['end']
+    #end = args['end']
     readfile_and_process(args['input'], args['output'])
 
     print("Writing SNPs with multiple alleles ...")
