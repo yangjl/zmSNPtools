@@ -11,7 +11,7 @@ import os
 def version():
     v0 = """
     ##########################################################################################
-    snpfrq version 2.1
+    snpfrq version 2.13
     Jinliang Yang
     updated: April 8th, 2015, for SAM SNPs
     --------------------------------
@@ -127,9 +127,9 @@ def get_loci_info(tokens):
     snpset = list(set0)
         
     info = {}
-    if len(snpset) == 1:
+    if len(snpset) < 2:
         prob1.append(tokens)
-    if len(snpset) > 2:
+    elif len(snpset) > 2:
         prob3.append(tokens)
     elif len(snpset) == 2:
         c1 = snptokens.count(snpset[0])
@@ -138,12 +138,12 @@ def get_loci_info(tokens):
         if c1 >= c2:
             info['major'] = snpset[0]
             info['minor'] = snpset[1]
-            info['maf'] = round(c2/(c1+c2),3)
+            info['maf'] = round(c2/(c1+c2), 5)
         else:
             info['major'] = snpset[1]
             info['minor'] = snpset[0]
-            info['maf'] = round(c1/(c1+c2),3)
-        info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens),3)
+            info['maf'] = round(c1/(c1+c2), 5)
+        info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens), 5)
 
     return info
 
