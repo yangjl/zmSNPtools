@@ -1,19 +1,22 @@
 # Jinliang Yang
-# function to 
+# function to prepare slurm script
 
 setUpslurm <- function(slurmsh="largedata/GenSel/CL_test.sh",
-                       oneline=TRUE,
-                       codesh="myscript.sh",
-                       wd=NULL,
-                       sbatho="/home/jolyang/Documents/pvpDiallel/slurm-log/testout-%j.txt",
-                       sbathe="/home/jolyang/Documents/pvpDiallel/slurm-log/error-%j.txt",
-                       sbathJ="jobid"){
+                       codesh="sh largedata/myscript.sh",
+                       wd=NULL, jobid="myjob", email=FALSE
+                       ){
     
-    
+    #message(sprintf("###>>> cp from Introgression, tailored for pvpDiallel"))  
+  
     ##### setup working directory
     if(is.null(wd)){
        wd <- getwd()
     }
+    dir.create("slurm-log", showWarnings = FALSE)
+    sbath <- paste0(wd, "/slurm-log/")
+    sbatho <- paste0(sbath, "testout-%j.txt")
+    sbathe <- paste0(sbath, "err-%j.txt")
+    sbathJ <- jobid
     
     #### parameters pass to slurm script
     cat(paste("#!/bin/bash"),
@@ -25,27 +28,28 @@ setUpslurm <- function(slurmsh="largedata/GenSel/CL_test.sh",
         paste("#SBATCH -o", sbatho, sep=" "),
         paste("#SBATCH -e", sbathe, sep=" "),
         paste("#SBATCH -J", sbathJ, sep=" "),
+        
         "set -e",
         "set -u",
         "",
+        #"module load gmap/2014-05-15",
         file=slurmsh, sep="\n", append=FALSE);
     
     #### attach some sh scripts
-    if(oneline){
-       cat(codesh, file=slurmsh, sep="\n", append=TRUE) 
-    }else{
-        cat(paste("sh", codesh),
-            file=slurmsh, sep="\n", append=TRUE)
-    }
+    cat(codesh, file=slurmsh, sep="\n", append=TRUE)
     
     #### warning and message
-    cat("",
-        paste("python /home/jolyang/bin/send_email.py -s", slurmsh),
-        file=slurmsh, sep="\n", append=TRUE);
+    if(email){
+        cat("",
+            paste("python /home/jolyang/bin/send_email.py -s", slurmsh),
+            file=slurmsh, sep="\n", append=TRUE);
+    }
+    
     
     message(paste("###>>> In this path: cd ", wd, sep=""), "\n",
-            paste("###>>> note --ntask=x, 8GB of memory per CPU"),"\n",
-            paste("###>>> RUN: sbatch -p bigmemh --mem 24000", slurmsh),
+            paste("###>>> [ note: --ntasks=INT, number of cup ]"),"\n",
+            paste("###>>> [ note: --mem=16000, 16G memory ]"),"\n",
+            paste("###>>> RUN: sbatch -p bigmemh --ntasks 1", slurmsh),
             "")
     
 }
