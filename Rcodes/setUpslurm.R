@@ -3,7 +3,7 @@
 
 setUpslurm <- function(slurmsh="largedata/GenSel/CL_test.sh",
                        codesh="sh largedata/myscript.sh",
-                       wd=NULL, jobid="myjob", email=FALSE
+                       wd=NULL, jobid="myjob", email=NULL
                        ){
     
     #message(sprintf("###>>> cp from Introgression, tailored for pvpDiallel"))  
@@ -28,6 +28,10 @@ setUpslurm <- function(slurmsh="largedata/GenSel/CL_test.sh",
         paste("#SBATCH -o", sbatho, sep=" "),
         paste("#SBATCH -e", sbathe, sep=" "),
         paste("#SBATCH -J", sbathJ, sep=" "),
+        paste0("#SBATCH--mail-user=", email),
+        paste("#SBATCH--mail-type=END"),
+        paste("#SBATCH--mail-type=FAIL #email if fails"),
+            
         
         "set -e",
         "set -u",
@@ -39,17 +43,17 @@ setUpslurm <- function(slurmsh="largedata/GenSel/CL_test.sh",
     cat(codesh, file=slurmsh, sep="\n", append=TRUE)
     
     #### warning and message
-    if(email){
-        cat("",
-            paste("python /home/jolyang/bin/send_email.py -s", slurmsh),
-            file=slurmsh, sep="\n", append=TRUE);
-    }
+    #if(email){
+    #    cat("",
+    #        paste("python /home/jolyang/bin/send_email.py -s", slurmsh),
+    #        file=slurmsh, sep="\n", append=TRUE);
+    #}
     
     
     message(paste("###>>> In this path: cd ", wd, sep=""), "\n",
             paste("###>>> [ note: --ntasks=INT, number of cup ]"),"\n",
             paste("###>>> [ note: --mem=16000, 16G memory ]"),"\n",
-            paste("###>>> RUN: sbatch -p bigmemh --ntasks 1", slurmsh),
+            paste("###>>> RUN: sbatch -p bigmemh --ntasks=1", slurmsh),
             "")
     
 }
