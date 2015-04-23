@@ -41,4 +41,6 @@ Thumbs.db
 *bam
 *sam
 .Rproj.user
-sam_parser
+sam_parser/
+.RData
+.Rhistory

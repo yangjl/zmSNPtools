@@ -11,11 +11,14 @@ import os
 def version():
     ver0 = """
     ##########################################################################################
-    fpSNP version 0.2
+    fpSNP version 1.0
     Author: Jinliang Yang
     purpose: find a set of population specific fingerprint SNPs
     --------------------------------
-
+    
+    updated: 4/20/2015, run for SeeDs and Ames inbred lines with GBS data
+        o support multiple missing codes
+        o snpid, chr, pos, ...
     updated: 1/28/2015, run for US GBS data
     updated: 10/2/2014, first piece of the code
     ##########################################################################################
@@ -84,7 +87,10 @@ def readfile_and_process(infile_snp):
 
         for line in infile:
             tokens = line.split()
-            tokens = ["N" if x== args['missingcode'] else x for x in tokens]
+            ### change multiple missing codes to N
+            mcode = list(args['missingcode'])
+            for amcode in mcode:
+                tokens = ["N" if x== amcode else x for x in tokens]
             out = get_loci_info(tokens, idx= range(3,len(tokens)), MA="N")
             
             if 'minor' in out:
@@ -185,7 +191,7 @@ def get_parser():
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='input file: 3+ Density SNP Format (DSF), [snpid, chr, pos, plant1, ...]', type=str)
 
-    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="-")
+    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="-0")
 
     parser.add_argument('-o', '--output', help='output files, such as chr1_merged', type=str)
 
