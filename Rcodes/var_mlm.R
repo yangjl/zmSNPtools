@@ -1,5 +1,5 @@
 
-var_mlm <- function(moon = bmmoon, nullmodel="~ (1 | Genotype.y/Rep)", fullmodel="~ Phase + (1 | Genotype.y/Rep)"){
+var_mlm <- function(df = pheno, nullmodel="~ (1 | GCA1.all) + (1 | GCA2.all)", fullmodel="~ (1 | GCA1.all) + (1 | GCA2.all) + (1 | SCA.all)"){
     
     # Structures to hold results
     r2marg <- data.frame(trait=vector(), r2marg=vector(), r2cond=vector())
@@ -11,15 +11,15 @@ var_mlm <- function(moon = bmmoon, nullmodel="~ (1 | Genotype.y/Rep)", fullmodel
     idx2 <- which(nms == "V61")
     
     for (i in idx1:idx2) {
-        trait <- nms[i]
+        trait <- names(df)[2]
         
         # Construct the null model
         null.formula <- as.formula(paste(trait, nullmodel, sep=" "))
-        model.null <- lmer(null.formula, data = moon, REML = FALSE)
+        model.null <- lmer(null.formula, data = df, REML = FALSE)
         
         # Construct the model
         full.formula <- as.formula(paste(trait, fullmodel, sep=" "))
-        model.full <- lmer(full.formula, data = moon, REML = FALSE)
+        model.full <- lmer(full.formula, data = df, REML = FALSE)
         
         # Retrieve the p-value
         inter1a <- anova(model.null, model.full)[2, 6:8]
