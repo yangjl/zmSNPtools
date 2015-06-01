@@ -72,7 +72,7 @@ def version():
     --------------------------------
     
     updated: 6/1/2015
-        o ---
+        o version 0.9
     ##########################################################################################
     """
     return ver0
@@ -111,7 +111,7 @@ def main():
     read_write_BS_bed(infile_name=args['input'], outfile_name=args['output'])
 
     et = timeit.default_timer()
-
+    print("\n")
     print(">>> [ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
     print(">>> Job finished!")
 
