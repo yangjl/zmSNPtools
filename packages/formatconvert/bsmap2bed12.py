@@ -57,10 +57,11 @@ def read_write_BS_bed(infile_name, outfile_name):
             outfile.write("\t".join(map(str, ([tokens[0], int(tokens[1]) - 1, tokens[1], tokens[3],tokens[4], 
             tokens[2], tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10] ]))) + "\n")
             i = i + 1
-            sys.stdout.write('\r')
-            # the exact output you're looking for:
-            sys.stdout.write("Reading [ %d%% ] of the total [ %s ]" % (round(i/totlines*100, 0), totlines))
-            sys.stdout.flush()
+            if(args['verbose'] > 0):
+                sys.stdout.write('\r')
+                # the exact output you're looking for:
+                sys.stdout.write("Reading [ %d%% ] of the total [ %s ]" % (round(i/totlines*100, 0), totlines))
+                sys.stdout.flush()
 
 #get_loci_info(y[4:31])
 def version():
@@ -92,6 +93,7 @@ def get_parser():
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='MSMAP output', type=str)
     parser.add_argument('-o', '--output', help='BED12', type=str)
+    parser.add_argument('-v', '--verbose', help='BED12', type=int, default=0)
     return parser
     #parser = get_parser()
     #parser.print_help()
