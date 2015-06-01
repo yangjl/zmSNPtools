@@ -33,7 +33,7 @@ class SimpleProgressBar(object):
 #    time.sleep(.3)
 #    spb.update(i)
     
-def read_write_BS_bed(infile_name, outfile_name):
+def read_write_BS_bed(infile_name, outfile_name,  verbose=0):
     #temp = []
     with open(infile_name) as foo:
         totlines = len(foo.readlines())
@@ -57,7 +57,7 @@ def read_write_BS_bed(infile_name, outfile_name):
             outfile.write("\t".join(map(str, ([tokens[0], int(tokens[1]) - 1, tokens[1], tokens[3],tokens[4], 
             tokens[2], tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10] ]))) + "\n")
             i = i + 1
-            if(args['verbose'] > 0):
+            if(verbose > 0):
                 sys.stdout.write('\r')
                 # the exact output you're looking for:
                 sys.stdout.write("Reading [ %d%% ] of the total [ %s ]" % (round(i/totlines*100, 0), totlines))
@@ -93,7 +93,7 @@ def get_parser():
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='MSMAP output', type=str)
     parser.add_argument('-o', '--output', help='BED12', type=str)
-    parser.add_argument('-v', '--verbose', help='BED12', type=int, default=0)
+    parser.add_argument('-v', '--verbose', help='default=0, no progress', type=int, default=0)
     return parser
     #parser = get_parser()
     #parser.print_help()
@@ -110,7 +110,7 @@ def main():
     ##### cal running time ######
     st = timeit.default_timer()
    
-    read_write_BS_bed(infile_name=args['input'], outfile_name=args['output'])
+    read_write_BS_bed(infile_name=args['input'], outfile_name=args['output'], verbose=args['verbose'])
 
     et = timeit.default_timer()
     print("\n")
