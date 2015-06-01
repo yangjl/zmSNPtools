@@ -35,8 +35,9 @@ class SimpleProgressBar(object):
     
 def read_write_BS_bed(infile_name, outfile_name,  verbose=0):
     #temp = []
-    with open(infile_name) as foo:
-        totlines = len(foo.readlines())
+    if(verbose > 0):
+        with open(infile_name) as foo:
+            totlines = len(foo.readlines())
     with open(infile_name, 'r') as infile, open(outfile_name, 'w') as outfile: 
         ### check the first line
         line1 = infile.readline()
@@ -56,8 +57,9 @@ def read_write_BS_bed(infile_name, outfile_name,  verbose=0):
                          
             outfile.write("\t".join(map(str, ([tokens[0], int(tokens[1]) - 1, tokens[1], tokens[3],tokens[4], 
             tokens[2], tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10] ]))) + "\n")
-            i = i + 1
+            
             if(verbose > 0):
+                i = i + 1
                 sys.stdout.write('\r')
                 # the exact output you're looking for:
                 sys.stdout.write("Reading [ %d%% ] of the total [ %s ]" % (round(i/totlines*100, 0), totlines))
@@ -73,7 +75,8 @@ def version():
     --------------------------------
     
     updated: 6/1/2015
-        o version 0.9
+        o version 0.9 updates:
+        o 1.verbose; 2. improve mem-usage efficiency
     ##########################################################################################
     """
     return ver0
