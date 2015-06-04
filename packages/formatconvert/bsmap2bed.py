@@ -54,9 +54,8 @@ def read_write_BS_bed(infile_name, outfile_name,  verbose=0):
             #1. chrom, 2.start, 3.end, 4.name=context, 5, score, 6. strand, 7-12
             #temp.append([tokens[0], int(tokens[1]) - 1, tokens[1], tokens[3],tokens[4], tokens[2], 
             #             tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10] ])
-                         
-            outfile.write("\t".join(map(str, ([tokens[0], int(tokens[1]) - 1, tokens[1], tokens[3],tokens[4], 
-            tokens[2], tokens[5],tokens[6],tokens[7],tokens[8],tokens[9],tokens[10] ]))) + "\n")
+            temp = ":".join(map(str, ([tokens[3], "CT", tokens[5], "C", tokens[6], "T", tokens[7],tokens[8],tokens[9],tokens[10], tokens[11] ])))             
+            outfile.write("\t".join(map(str, ([tokens[0], int(tokens[1]) - 1, tokens[1], temp, tokens[4], tokens[2] ]))) + "\n")
             
             if(verbose > 0):
                 i = i + 1
@@ -69,14 +68,15 @@ def read_write_BS_bed(infile_name, outfile_name,  verbose=0):
 def version():
     ver0 = """
     ##########################################################################################
-    BSMAP to BED12
+    BSMAP to BED6
     Author: Jinliang Yang to my little girl Olivia
-    purpose: convert BSMAP format to BED12 format
+    purpose: convert BSMAP format to BED6 format
     --------------------------------
     
-    updated: 6/1/2015
-        o version 0.9 updates:
+    updated: 6/4/2015
+        o version 1.1 updates:
         o 1.verbose; 2. improve mem-usage efficiency
+        o 3. changed to bed6: info stored in col5:name from 6-12.
     ##########################################################################################
     """
     return ver0
