@@ -1,12 +1,18 @@
 
-newpos <- function (dataframe, GAP = 5e+06) 
+newpos <- function (dataframe, GAP = 5e+06, version = "v3") 
 {
   d <- dataframe
   if (!("chr" %in% names(d) & "pos" %in% names(d))){
     stop("Make sure your data frame contains columns chr and pos")
   }
     
-  cl <- read.csv("~/Documents/Rcodes/chr_length_B73v2.csv")
+  if(version == "v2"){
+      cl <- read.csv("~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v2.csv")
+  }
+  if(version == "v3"){
+      cl <- read.csv("~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v3.csv")
+  }
+  
   cl$accumpos <- cl$BP
   cl <- cl[order(cl$CHR), ]
   d$newpos <- d$pos;
@@ -17,9 +23,15 @@ newpos <- function (dataframe, GAP = 5e+06)
   return(d)
 }
 
-chrline_tick <- function(GAP=5e+06){
+chrline_tick <- function(GAP=5e+06, version = "v3"){
   #xscale:
-  cl <- read.csv("~/Documents/Rcodes/chr_length_B73v2.csv")
+  if(version == "v2"){
+      cl <- read.csv("~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v2.csv")
+  }
+  if(version == "v3"){
+      cl <- read.csv("~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v3.csv")
+  }
+  
   names(cl) <- c("chr", "snp", "pos")
   cl <- newpos(cl, GAP=GAP)
     
@@ -31,3 +43,8 @@ chrline_tick <- function(GAP=5e+06){
   }
   return(cl)
 }
+
+#cl <- read.csv("~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v3.csv")
+#cl$SNP <- "ATCG"
+#cl <- cl[, c(1,3,2)]
+#write.table(cl, "~/Documents/Github/zmSNPtools/Rcodes/chr_length_B73v3.csv", sep=",", row.names=FALSE, quote=FALSE)
