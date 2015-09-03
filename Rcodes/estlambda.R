@@ -1,4 +1,4 @@
-### function copied from GenABEL and modified by Jingliang
+### function copied from GenABEL and modified by Jingliang Yang
 estlambda <- function (data, plot = FALSE, proportion = 1, method = "regression", 
           filter = TRUE, df = 1, ...) 
 {
