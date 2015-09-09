@@ -162,7 +162,7 @@ def ComputeOneGroup(onegroup):
 def GetIBDgerp(ped, ibddsf):
   
   ### setup empty dataframe to collect results
-  resa1 = resa2 = resd1 = resd2 = resh2 = a2b = ab2 pd.DataFrame()
+  resa1 = resa2 = resd1 = resd2 = resh2 = a2b = ab2 = pd.DataFrame()
   
   for index, row in ped.iterrows():
     mydf = ibddsf[ ["ibdid", "B73", "RS", "h", row["P1"], row["P2"]] ]
