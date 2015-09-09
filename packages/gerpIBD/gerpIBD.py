@@ -10,7 +10,7 @@ import timeit
 import os
 
 def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed", 
-             gerpfile="largedata/SNP/allsnps_11m_gerpv2_tidy.csv", 
+             gerpfile="largedata/SNP/gerpv2_b0_real.csv", 
              dsffile="largedata/SNP/allsnps_11m.dsf5",
              hfile="largedata/snpeff/gy_h.txt",
              gerppositive="positive"):
@@ -170,7 +170,7 @@ def GetIBDgerp(ped, ibddsf):
     temh2.columns = [row["F1"]]
     resh2 = pd.concat([resh2, temh2], axis=1)
   
-  hashres = {"gerpa1": resa1, "gerpa2":resa2, "gerpd1":resd1, "gerpd2":resd2, "greph2":resh2}
+  hashres = {"gerpa1": resa1, "gerpa2":resa2, "gerpd1":resd1, "gerpd2":resd2, "gerph2":resh2}
   return hashres  
 
 ### write results
