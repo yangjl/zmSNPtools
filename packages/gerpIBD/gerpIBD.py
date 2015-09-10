@@ -221,7 +221,7 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #gerpa1.to_csv("_".join([outbase, "a1.gs"]), sep="\t", header=True, index=False, index_label=False)
 
   gerpa2 = hashres["gerpa2"]
-  gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
+  gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
@@ -235,28 +235,28 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #gerpd1.to_csv("_".join([outbase, "d1.gs"]), sep="\t", header=True, index=False, index_label=False)
 
   gerpd2 = hashres["gerpd2"]
-  gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
+  gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
+  gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpa2b = hashres["a2b"]
-  gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
+  gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2b = np.round(gerpa2b, 0)
   gerpa2b = gerpa2b.transpose() 
   gerpa2b.insert(0, "ibdid", gerpa2b.index)
   gerpa2b.to_csv("_".join([outbase, "a2b.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpab2 = hashres["ab2"]
-  gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 0)
+  gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpab2 = np.round(gerpab2, 0)
   gerpab2 = gerpab2.transpose() 
   gerpab2.insert(0, "ibdid", gerpab2.index)
