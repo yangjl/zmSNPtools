@@ -78,32 +78,32 @@ def ComputeOneGroup(onegroup):
         gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]
-        gerpa2b = gerpa2b + onesnp["RS"]
-        gerpab2 = gerpab2 + onesnp["RS"]
+        gerpa2b = gerpa2b + onesnp["RS"]*2
+        gerpab2 = gerpab2 + onesnp["RS"]*2
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and onesnp[p2] == b73: 
         gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
         gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
-        gerp2h = gerp2h + onesnp["RS"]*onesnp["h"]
-        gerpa2b = gerpa2b + onesnp["RS"]*onesnp["h"]*1/3
-        gerpab2 = gerpab2 + onesnp["RS"]*onesnp["h"]*2/3
+        gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])
+        gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])*2/3
+        gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])*4/3
       elif onesnp[p1] == "N" and onesnp[p2] == b73:
         gerp1a = gerp1a + 1.5
         gerp2a = gerp2a + onesnp["RS"]*1.5
         gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
-        gerp2h = gerp2h + onesnp["RS"]*((1+onesnp["h"])/2)
-        gerpa2b = gerpa2b + onesnp["RS"]*((1+onesnp["h"])/2)*1/3
-        gerpab2 = gerpab2 + onesnp["RS"]*((1+onesnp["h"])/2)*2/3
+        gerp2h = gerp2h + onesnp["RS"]*(1.5+onesnp["h"]/2)
+        gerpa2b = gerpa2b + onesnp["RS"]*(4/3+onesnp["h"]*1/3)
+        gerpab2 = gerpab2 + onesnp["RS"]*(5/3+onesnp["h"]*2/3)
       elif onesnp[p1] == b73 and (onesnp[p2] != b73 and onesnp[p2] != "N"):
         gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
         gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
-        gerp2h = gerp2h + onesnp["RS"]*onesnp["h"]
-        gerpa2b = gerpa2b + onesnp["RS"]*onesnp["h"]*2/3
-        gerpab2 = gerpab2 + onesnp["RS"]*onesnp["h"]*1/3
+        gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])
+        gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])*2/3
+        gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])*4/3
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and (onesnp[p2] != b73 and onesnp[p2] != "N"):
         gerp1a = gerp1a + 0
         gerp2a = gerp2a + 0
@@ -117,17 +117,17 @@ def ComputeOneGroup(onegroup):
         gerp2a = gerp2a + onesnp["RS"]*0.5
         gerp1d = gerp1d + 0.5
         gerp2d = gerp2d + onesnp["RS"]*0.5
-        gerp2h = gerp2h + onesnp["RS"]*onesnp["h"]*0.5
-        gerpa2b = gerpa2b + onesnp["RS"]*onesnp["h"]*0.5*2/3
-        gerpab2 = gerpab2 + onesnp["RS"]*onesnp["h"]*0.5*1/3
+        gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])/2
+        gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])/3
+        gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])/3*2
       elif onesnp[p1] == b73 and onesnp[p2] == "N":
         gerp1a = gerp1a + 1.5
         gerp2a = gerp2a + onesnp["RS"]*1.5
         gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
-        gerp2h = gerp2h + onesnp["RS"]*((1+onesnp["h"])/2)
-        gerpa2b = gerpa2b + onesnp["RS"]*((1+onesnp["h"])/2)*2/3
-        gerpab2 = gerpab2 + onesnp["RS"]*((1+onesnp["h"])/2)*1/3
+        gerp2h = gerp2h + onesnp["RS"]*(1.5+onesnp["h"]/2)
+        gerpa2b = gerpa2b + onesnp["RS"]*(4+onesnp["h"])/3
+        gerpab2 = gerpab2 + onesnp["RS"]*((5+onesnp["h"]*2)/3
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and onesnp[p2] == "N":
         gerp1a = gerp1a + 0.5
         gerp2a = gerp2a + onesnp["RS"]*0.5
@@ -140,10 +140,10 @@ def ComputeOneGroup(onegroup):
         gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
         gerp1d = gerp1d + 1
-        gerp2d = gerp2d + onesnp["RS"]
-        gerp2h = gerp2h + onesnp["RS"]*onesnp["h"]
-        gerpa2b = gerpa2b + onesnp["RS"]*onesnp["h"]*0.5
-        gerpab2 = gerpab2 + onesnp["RS"]*onesnp["h"]*0.5
+        gerp2d = gerp2d + onesnp["RS"]*2/3
+        gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"]/3)
+        gerpa2b = gerpa2b + onesnp["RS"]*(8/9+2/9*onesnp["h"])
+        gerpab2 = gerpab2 + onesnp["RS"]*(10/9+4/9*onesnp["h"])
       else:
         warnings(onesnp["snpid"], "for", p1, p2, "have problem for additive imputation!")
     # for cases that B73==N
