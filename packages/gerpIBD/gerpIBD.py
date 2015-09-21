@@ -127,7 +127,7 @@ def ComputeOneGroup(onegroup):
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]*(1.5+onesnp["h"]/2)
         gerpa2b = gerpa2b + onesnp["RS"]*(4+onesnp["h"])/3
-        gerpab2 = gerpab2 + onesnp["RS"]*((5+onesnp["h"]*2)/3
+        gerpab2 = gerpab2 + onesnp["RS"]*(5+onesnp["h"]*2)/3
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and onesnp[p2] == "N":
         gerp1a = gerp1a + 0.5
         gerp2a = gerp2a + onesnp["RS"]*0.5
@@ -268,12 +268,12 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.5
+    gerpIBD version 0.6
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
-    updated: 09/09/2015, imputation for triplotype, a2b and ab2
+    updated: 09/20/2015, imputation for triplotype, a2b and ab2
     updated: 09/08/2015, incomplete dominance
     updated: 2/22/2014, do negative gerp
     ##########################################################################################
