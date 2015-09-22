@@ -63,7 +63,7 @@ def getPed(ibddsf):
 def ComputeOneGroup(onegroup):
   # gerp1a/gerp1d: gerp complementation
   # gerp2a/gerp2d: sum of gerp value
-  gerp1a = gerp2a = gerp1d = gerp2d = gerp2h = 0
+  gerp2a = gerp2d = gerp2h = 0
   gerpa2b = gerpab2 = 0
   p1 = "P1"
   p2 = "P2"
@@ -73,73 +73,55 @@ def ComputeOneGroup(onegroup):
       b73 = onesnp["B73"]
         
       if onesnp[p1] == b73 and onesnp[p2] == b73:
-        gerp1a = gerp1a + 2
         gerp2a = gerp2a + onesnp["RS"]*2
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]
         gerpa2b = gerpa2b + onesnp["RS"]*2
         gerpab2 = gerpab2 + onesnp["RS"]*2
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and onesnp[p2] == b73: 
-        gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])
         gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])*2/3
         gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])*4/3
       elif onesnp[p1] == "N" and onesnp[p2] == b73:
-        gerp1a = gerp1a + 1.5
         gerp2a = gerp2a + onesnp["RS"]*1.5
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]*(1.5+onesnp["h"]/2)
         gerpa2b = gerpa2b + onesnp["RS"]*(4/3+onesnp["h"]*1/3)
         gerpab2 = gerpab2 + onesnp["RS"]*(5/3+onesnp["h"]*2/3)
       elif onesnp[p1] == b73 and (onesnp[p2] != b73 and onesnp[p2] != "N"):
-        gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])
         gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])*2/3
         gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])*4/3
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and (onesnp[p2] != b73 and onesnp[p2] != "N"):
-        gerp1a = gerp1a + 0
         gerp2a = gerp2a + 0
-        gerp1d = gerp1d + 0
         gerp2d = gerp2d + 0
         gerp2h = gerp2h + 0
         gerpa2b = gerpa2b + 0
         gerpab2 = gerpab2 + 0
       elif onesnp[p1] == "N" and (onesnp[p2] != b73 and onesnp[p2] != "N"):
-        gerp1a = gerp1a + 0.5
         gerp2a = gerp2a + onesnp["RS"]*0.5
-        gerp1d = gerp1d + 0.5
         gerp2d = gerp2d + onesnp["RS"]*0.5
         gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"])/2
         gerpa2b = gerpa2b + onesnp["RS"]*(1+onesnp["h"])/3
         gerpab2 = gerpab2 + onesnp["RS"]*(1+onesnp["h"])/3*2
       elif onesnp[p1] == b73 and onesnp[p2] == "N":
-        gerp1a = gerp1a + 1.5
         gerp2a = gerp2a + onesnp["RS"]*1.5
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]
         gerp2h = gerp2h + onesnp["RS"]*(1.5+onesnp["h"]/2)
         gerpa2b = gerpa2b + onesnp["RS"]*(4+onesnp["h"])/3
         gerpab2 = gerpab2 + onesnp["RS"]*(5+onesnp["h"]*2)/3
       elif (onesnp[p1] != b73 and onesnp[p1] != "N") and onesnp[p2] == "N":
-        gerp1a = gerp1a + 0.5
         gerp2a = gerp2a + onesnp["RS"]*0.5
-        gerp1d = gerp1d + 0.5
         gerp2d = gerp2d + onesnp["RS"]*0.5
         gerp2h = gerp2h + onesnp["RS"]*onesnp["h"]*0.5
         gerpa2b = gerpa2b + onesnp["RS"]*onesnp["h"]*0.5*1/3
         gerpab2 = gerpab2 + onesnp["RS"]*onesnp["h"]*0.5*2/3
       elif onesnp[p1] == "N" and onesnp[p2] == "N":
-        gerp1a = gerp1a + 1
         gerp2a = gerp2a + onesnp["RS"]
-        gerp1d = gerp1d + 1
         gerp2d = gerp2d + onesnp["RS"]*2/3
         gerp2h = gerp2h + onesnp["RS"]*(1+onesnp["h"]/3)
         gerpa2b = gerpa2b + onesnp["RS"]*(8/9+2/9*onesnp["h"])
@@ -148,14 +130,12 @@ def ComputeOneGroup(onegroup):
         warnings(onesnp["snpid"], "for", p1, p2, "have problem for additive imputation!")
     # for cases that B73==N
     else:
-      gerp1a = gerp1a + 0
       gerp2a = gerp2a + 0
-      gerp1d = gerp1d + 0
       gerp2d = gerp2d + 0
       gerp2h = gerp2h + 0
       gerpa2b = gerpa2b + 0
       gerpab2 = gerpab2 + 0
-    gres = {'gerp1a': gerp1a, 'gerp2a': gerp2a, "gerp1d": gerp1d, "gerp2d": gerp2d, "gerp2h": gerp2h, "gerpa2b":gerpa2b, "gerpab2":gerpab2}  
+    gres = {'gerp2a': gerp2a, "gerp2d": gerp2d, "gerp2h": gerp2h, "gerpa2b":gerpa2b, "gerpab2":gerpab2}  
   return pd.Series(gres, name='metrics')
   
 
@@ -163,7 +143,7 @@ def ComputeOneGroup(onegroup):
 def GetIBDgerp(ped, ibddsf):
   
   ### setup empty dataframe to collect results
-  resa1 = resa2 = resd1 = resd2 = resh2 = a2b = ab2 = pd.DataFrame()
+  resa2 = resd2 = resh2 = a2b = ab2 = pd.DataFrame()
   
   for index, row in ped.iterrows():
     mydf = ibddsf[ ["ibdid", "B73", "RS", "h", row["P1"], row["P2"]] ]
@@ -172,17 +152,10 @@ def GetIBDgerp(ped, ibddsf):
     print(">>> computing F1: [ ", row["F1"], " ]!")
     myres = mydf.groupby(['ibdid']).apply(ComputeOneGroup)
     #### concatenate the results
-    tema1 = pd.DataFrame(myres, columns= ["gerp1a"])
-    tema1.columns = [row["F1"]]
-    resa1 = pd.concat([resa1, tema1], axis=1)
     
     tema2 = pd.DataFrame(myres, columns= ["gerp2a"])
     tema2.columns = [row["F1"]]
     resa2 = pd.concat([resa2, tema2], axis=1)
-    
-    temd1 = pd.DataFrame(myres, columns= ["gerp1d"])
-    temd1.columns = [row["F1"]]
-    resd1 = pd.concat([resd1, temd1], axis=1)
     
     temd2 = pd.DataFrame(myres, columns= ["gerp2d"])
     temd2.columns = [row["F1"]]
@@ -200,7 +173,7 @@ def GetIBDgerp(ped, ibddsf):
     temab2.columns = [row["F1"]]
     ab2 = pd.concat([ab2, temab2], axis=1)
   
-  hashres = {"gerpa1": resa1, "gerpa2":resa2, "gerpd1":resd1, "gerpd2":resd2, "gerph2":resh2, "a2b":a2b, "ab2":ab2}
+  hashres = {"gerpa2":resa2, "gerpd2":resd2, "gerph2":resh2, "a2b":a2b, "ab2":ab2}
   return hashres  
 
 ### write results
@@ -212,14 +185,7 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #newrange = [-10, 10]
   #mfac = (newrange[1] - newrange[0])
   #change to (-10, 10)
-  gerpa1 = hashres["gerpa1"]
-  gerpa1 = gerpa1.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
-  gerpa1 = np.round(gerpa1, 0)
-  gerpa1 = gerpa1.transpose() 
-  gerpa1.insert(0, "ibdid", gerpa1.index)
-  #nm1 = list(gerpa1.columns.values)
-  #gerpa1.to_csv("_".join([outbase, "a1.gs"]), sep="\t", header=True, index=False, index_label=False)
-
+  
   gerpa2 = hashres["gerpa2"]
   gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
@@ -227,13 +193,6 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
-  gerpd1 = hashres["gerpd1"]
-  gerpd1 = gerpd1.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
-  gerpd1 = np.round(gerpd1, 0)
-  gerpd1 = gerpd1.transpose()
-  gerpd1.insert(0, "ibdid", gerpd1.index)
-  #gerpd1.to_csv("_".join([outbase, "d1.gs"]), sep="\t", header=True, index=False, index_label=False)
-
   gerpd2 = hashres["gerpd2"]
   gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
@@ -262,17 +221,46 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   gerpab2.insert(0, "ibdid", gerpab2.index)
   gerpab2.to_csv("_".join([outbase, "ab2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
-
-
+### write results
+def write_adk_only(hashres, outbase="largedata/SNP/test"):
+  #Apply operates on each row or column with the lambda function
+  #axis = 0 -> act on columns, axis = 1 act on rows
+  #x is a variable for the whole row or column
+  #This line will scale minimum = 0 and maximum = 1 for each column
+  #newrange = [-10, 10]
+  #mfac = (newrange[1] - newrange[0])
+  #change to (-10, 10)
+  
+  gerpa2 = hashres["gerpa2"]
+  gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  gerpa2 = np.round(gerpa2, 0)
+  gerpa2 = gerpa2.transpose() 
+  gerpa2.insert(0, "ibdid", gerpa2.index)
+  gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
+  
+  gerpd2 = hashres["gerpd2"]
+  gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  gerpd2 = np.round(gerpd2, 0)
+  gerpd2 = gerpd2.transpose() 
+  gerpd2.insert(0, "ibdid", gerpd2.index)
+  gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
+  
+  gerph2 = hashres["gerph2"]
+  gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  gerph2 = np.round(gerph2, 0)
+  gerph2 = gerph2.transpose() 
+  gerph2.insert(0, "ibdid", gerph2.index)
+  gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.6
+    gerpIBD version 0.7
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
+    updated: 09/22/2015, add argument outtype; removed a1 and d1
     updated: 09/20/2015, imputation for triplotype, a2b and ab2
     updated: 09/08/2015, incomplete dominance
     updated: 2/22/2014, do negative gerp
@@ -303,6 +291,7 @@ def get_parser():
   parser.add_argument('-f','--dofd', help='degree of dominance', default='largedata/snpeff/gy_h.txt', type=str)
   parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
   parser.add_argument('-o', '--output', help='base of the output file', default='gerpIBD_output', type=str)
+  parser.add_argument('-t', '--outtype', help='1, output all; 2 output add, dom and h only', default=1, type=int)
   return parser
   #parser = get_parser()
   #parser.print_help()
@@ -316,7 +305,7 @@ def main():
   ### read data
   print("###>>> reading data ...")
   if args['path'] is not None:
-     os.chdir(args['path'])
+      os.chdir(args['path'])
   ibddsf = readData(bedfile=args['ibd'], 
                     gerpfile=args["gerp"], 
                     dsffile=args['snp'],
@@ -328,8 +317,11 @@ def main():
   ### get IBM gerp looping through ped lines
   result = GetIBDgerp(ped, ibddsf)
   print("###>>> writing results ...")
-  writeRes(hashres=result, outbase=args['output'])
-  
+  if(args['outype'] == 1):
+      writeRes(hashres=result, outbase=args['output'])
+  elif(args['outype'] == 2):
+      write_adk_only(hashres=result, outbase=args['output'])
+      
   ### get the end time
   et = timeit.default_timer()
   print("###>>> [ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
