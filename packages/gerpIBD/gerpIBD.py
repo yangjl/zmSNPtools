@@ -317,9 +317,9 @@ def main():
   ### get IBM gerp looping through ped lines
   result = GetIBDgerp(ped, ibddsf)
   print("###>>> writing results ...")
-  if(args['outype'] == 1):
+  if(args['outtype'] == 1):
       writeRes(hashres=result, outbase=args['output'])
-  elif(args['outype'] == 2):
+  elif(args['outtype'] == 2):
       write_adk_only(hashres=result, outbase=args['output'])
       
   ### get the end time
