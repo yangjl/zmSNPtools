@@ -291,7 +291,7 @@ def get_parser():
   parser.add_argument('-f','--dofd', help='degree of dominance', default='largedata/snpeff/gy_h.txt', type=str)
   parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
   parser.add_argument('-o', '--output', help='base of the output file', default='gerpIBD_output', type=str)
-  parser.add_argument('-t', '--outtype', help='1, output all; 2 output add, dom and h only', default=1, type=int)
+  parser.add_argument('-t', '--outtype', help='a, output all; k output add, dom and k only', default= 'a', type=str)
   return parser
   #parser = get_parser()
   #parser.print_help()
@@ -317,9 +317,9 @@ def main():
   ### get IBM gerp looping through ped lines
   result = GetIBDgerp(ped, ibddsf)
   print("###>>> writing results ...")
-  if(args['outtype'] == 1):
+  if(args['outtype'] == "a"):
       writeRes(hashres=result, outbase=args['output'])
-  elif(args['outtype'] == 2):
+  elif(args['outtype'] == "k"):
       write_adk_only(hashres=result, outbase=args['output'])
       
   ### get the end time
