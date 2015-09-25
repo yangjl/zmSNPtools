@@ -187,35 +187,35 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpa2b = hashres["a2b"]
-  gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2b = np.round(gerpa2b, 0)
   gerpa2b = gerpa2b.transpose() 
   gerpa2b.insert(0, "ibdid", gerpa2b.index)
   gerpa2b.to_csv("_".join([outbase, "a2b.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpab2 = hashres["ab2"]
-  gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpab2 = np.round(gerpab2, 0)
   gerpab2 = gerpab2.transpose() 
   gerpab2.insert(0, "ibdid", gerpab2.index)
@@ -232,21 +232,21 @@ def write_adk_only(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
@@ -255,12 +255,12 @@ def write_adk_only(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.7
+    gerpIBD version 0.8
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
-    updated: 09/22/2015, add argument outtype; removed a1 and d1
+    updated: 09/25/2015, add argument outtype; removed a1 and d1, no normalization!
     updated: 09/20/2015, imputation for triplotype, a2b and ab2
     updated: 09/08/2015, incomplete dominance
     updated: 2/22/2014, do negative gerp
