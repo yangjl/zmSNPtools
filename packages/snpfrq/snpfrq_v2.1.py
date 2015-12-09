@@ -11,17 +11,16 @@ import os
 def version():
     v0 = """
     ##########################################################################################
-    snpfrq version 2.13
+    snpfrq version 3.0
     Jinliang Yang
-    updated: April 8th, 2015, for SAM SNPs
+    updated: Dec 8th, 2015, for HapMap format GBS SNPs
     --------------------------------
-    compute SNP frq and loci missing rate from 'BED+' format
-    USAGE: ./snpfrq_v2.1.py -i test_hmp1_chr1.bed -s 5 -m "-N+" -a 0 -b 1 -c 2 -o test.out
+    Compute SNP frq and loci missing rate from 'HapMap or BED+' format
 
+    USAGE: snpfrq -i test_hmp1_chr1.dsf -s 5 -m "N" -o out.txt
     --------------------------------
-    new feature: 1. support multiple missing codes
-    new feature: 2. add maf and missingness filtration!
-
+    Note:  maf=0 for non-variant sites. maf=1 for sites with multiple alleles.
+    missing sets to -9 for these sites.
     ##########################################################################################
     """
     return v0
@@ -32,95 +31,30 @@ def warning(*objs):
 
 ##########################################################################################
 def readfile_and_process(infile_name, outfile_name):
-
-    with open(infile_name, 'r') as infile:
-    
-        line1 = infile.readline()
-        line1array = line1.split()
-        if(line1array[3] == "snpid"):
-            wtype = 1
-        elif(line1array[0] == "chr" and line1array[1] == "pos"):
-            wtype = 2
-
-        line2 = infile.readline()
-        line2array = line2.split()
-        if(len(str(line2array[start])) != 1 and len(str(line2array[start])) != 3):
-            warning("SNP should be coded with one letter, like:'A T C G or - +'!" or 'A A, T T, ...')
-
-    myout = args['output'].split('.')[0]
-    myout = ".".join([myout, "flt"])
-    with open(infile_name, 'r') as infile, open(outfile_name, "w") as outfile, open(myout, "w") as outfile2:
-
-        line1 = infile.readline()
-        line1data = line1.split()
-        
-        
-        if args['outmode'] == 1:
-            outfile.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:])  + "\n")
-            outfile2.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\t" + "\t".join(line1data[start:]) + "\n")
-        elif args['outmode'] == 2:
-            outfile.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\n")
-            outfile2.write("\t".join(["snpid","major","minor","MAF","missing"]) + "\n")
-
-
+    with open(infile_name, 'r') as infile, open(outfile_name, "w") as outfile:
         for line in infile:
-            tokens = line.split()
+            if line.startswith("#"):
+                pass
+            elif line.startswith("rs#"):
+                line1array = line.split()
+                outfile.write("\t".join(line1array[0:(args['start']-1)]) + "\t" + "\t".join(["major", "minor", "MAF", "missing"]) + "\n")
+            else:
+                tokens = line.split()
+                ### write the first serveral columns:
+                outfile.write("\t".join(tokens[0:(args['start']-1)]) + "\t")
+                snptokens = tokens[(args['start']-1):]
+                ### change the missing code to N
+                mcode = list(args['missingcode'])
+                for amcode in mcode:
+                    snptokens = ["N" if x== amcode else x for x in snptokens]
 
-            ### change the missing code to N
-            mcode = list(args['missingcode'])
-            for amcode in mcode:
-                tokens = ["N" if x== amcode else x for x in tokens]
-
-            ### get information for each locus
-            out = get_loci_info(tokens)
-
-            ### print out the results
-            if out:
-                if wtype == 1 and args['outmode'] == 1:
-                    if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
-                        outfile.write("\t".join([ tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing']) ]) + \
-                          "\t" + "\t".join(tokens[start:]) + "\n")
-                    else:
-                        outfile2.write("\t".join([tokens[3], out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + "\t" \
-                           + "\t".join(tokens[start:]) + "\n")
-                if wtype == 1 and args['outmode'] == 2:
-                    if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
-                        outfile.write("\t".join([ tokens[3], out['major'], out['minor'], str(out['maf']), \
-                        str(out['missing']) ]) + "\n")
-                    else:
-                        outfile2.write("\t".join([tokens[3], out['major'], out['minor'], str(out['maf']), \
-                        str(out['missing'])]) + "\n")           
-                elif wtype == 2:
-                    if out['maf'] >= args['maf'] and out['missing'] <= args['mr']:
-                        outfile.write("_".join([ tokens[0],tokens[1] ]) + "\t" + \
-                          "\t".join([out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + \
-                          "\t" + "\t".join(tokens[start:]) + "\n")
-                    else:
-                        outfile2.write("_".join([ tokens[0],tokens[1] ]) + "\t" + \
-                           "\t".join([out['major'], out['minor'], str(out['maf']), str(out['missing'])]) + \
-                           "\t" + "\t".join(tokens[start:]) + "\n")
+                ### get information for each locus
+                out = get_loci_info(snptokens)
+                outfile.write("\t".join([ out['major'], out['minor'], str(out['maf']), str(out['missing']) ]) + "\n")
 
 
-def write_prob_snp():
-    """
-    Write the problem snp to the input.prob file:
-    """
-    output = args['output'].split('.')[0]
-    output1 = ".".join([output, "one"])
-    outfile1 = open(output1, 'w')
-    for prob_snp1 in prob1:
-        outfile1.write('\t'.join(prob_snp1) + '\n')
-    outfile1.close()
+def get_loci_info(snptokens):
 
-    output3 = ".".join([output, "mul"])
-    outfile3 = open(output3, 'w')
-    for prob_snp3 in prob3:
-        outfile3.write('\t'.join(prob_snp3) + '\n')
-    outfile3.close()
-
-def get_loci_info(tokens):
-
-    snptokens = tokens[start:]
     set0 = set(snptokens)
     if 'N' in set0:
         set0.remove('N')
@@ -128,9 +62,15 @@ def get_loci_info(tokens):
         
     info = {}
     if len(snpset) < 2:
-        prob1.append(tokens)
+        info['major'] = ''.join(snpset)
+        info['minor'] = ''.join(snpset)
+        info['maf'] = 0
+        info['missing'] = -9
     elif len(snpset) > 2:
-        prob3.append(tokens)
+        info['major'] = ''.join(snpset)
+        info['minor'] = ''.join(snpset)
+        info['maf'] = 1
+        info['missing'] = -9
     elif len(snpset) == 2:
         c1 = snptokens.count(snpset[0])
         c2 = snptokens.count(snpset[1])
@@ -167,9 +107,6 @@ def get_parser():
     parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int)
     #parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
     parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
-    parser.add_argument('-a','--maf', help='cutoff of minor allele freq', type=float, default=0)
-    parser.add_argument('-b','--mr', help='cutoff of missing rate', type=float, default=1)
-    parser.add_argument('-c','--outmode', help='mode of output', type=float, default=2)
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
 
     return parser
@@ -187,18 +124,10 @@ if __name__ == '__main__':
 
     ##### read in the input file ######
     st = timeit.default_timer()
-    prob1=[]
-    prob3=[]
-    print("Reading and writing SNP info ...")
-
-    start = args['start'] -1
-    #end = args['end']
+    print(">>>Reading and writing SNP info ...")
     readfile_and_process(args['input'], args['output'])
-
-    print("Writing SNPs with multiple alleles ...")
-    write_prob_snp()
 
     et = timeit.default_timer()
 
-    print("[ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
-    print("Job finished!")
+    print(">>>[ ", "%.0f" % ((et - st)/60), " ] minutes of run time!")
+    print(">>>Job finished!")
