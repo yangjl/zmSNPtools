@@ -47,9 +47,9 @@ def readfile_and_process(infile_name, outfile_name):
                 alleles = tokens[1]
 
                 ### change the missing code to N
-                #mcode = list(args['missingcode'])
-                #for amcode in mcode:
-                #    snptokens = ["N" if x== amcode else x for x in snptokens]
+                mcode = list(args['missingcode'])
+                for amcode in mcode:
+                    snptokens = ["N" if x== amcode else x for x in snptokens]
 
                 ### replace with IUPAC
                 snptokens = IUPAC(snptokens, alleles)
@@ -156,7 +156,7 @@ def get_parser():
     parser.add_argument('-i','--input', help='input file', type=str)
     parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int)
     #parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
-    #parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
+    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
 
     return parser
