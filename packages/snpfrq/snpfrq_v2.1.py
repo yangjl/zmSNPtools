@@ -11,9 +11,10 @@ import os
 def version():
     v0 = """
     ##########################################################################################
-    snpfrq version 3.0
+    snpfrq version 3.2
     Jinliang Yang
     updated: Dec 8th, 2015, for HapMap format GBS SNPs
+    updated: add IUPAC code
     --------------------------------
     Compute SNP frq and loci missing rate from 'HapMap or BED+' format
 
@@ -43,14 +44,15 @@ def readfile_and_process(infile_name, outfile_name):
                 ### write the first serveral columns:
                 outfile.write("\t".join(tokens[0:(args['start']-1)]) + "\t")
                 snptokens = tokens[(args['start']-1):]
-                ### change the missing code to N
-                mcode = list(args['missingcode'])
+                alleles = tokens[1]
 
+                ### change the missing code to N
+                #mcode = list(args['missingcode'])
                 #for amcode in mcode:
                 #    snptokens = ["N" if x== amcode else x for x in snptokens]
 
                 ### replace with IUPAC
-                snptokens = IUPAC(snptokens)
+                snptokens = IUPAC(snptokens, alleles)
 
                 ### get information for each locus
                 out = get_loci_info(snptokens)
@@ -91,7 +93,13 @@ def get_loci_info(snptokens):
 
     return info
 
-def IUPAC(snptokens):
+### note this is hapmap version IUPAC, + actually= ATCG/-
+def IUPAC(snptokens, alleles):
+
+    alleles = alleles.split("/")
+    if '-' in alleles:
+        alleles.remove('-')
+
     x = []
     for index, item in enumerate(snptokens):
         if item == "N":
@@ -119,7 +127,10 @@ def IUPAC(snptokens):
         elif item == "+":
             x.extend(["+", "+"])
         elif item == "0":
-            x.extend(["+", "-"])
+            if len(alleles) == 1:
+                x.extend([alleles[0], "-"])
+            else:
+                x.extend(["+", "-"])
         elif item == "-":
             x.extend(["-", "-"])
         else:
@@ -145,7 +156,7 @@ def get_parser():
     parser.add_argument('-i','--input', help='input file', type=str)
     parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int)
     #parser.add_argument('-e','--end', help='end cols (1-based) of the genotype', type=int)
-    parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
+    #parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
 
     return parser

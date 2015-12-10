@@ -5,7 +5,7 @@ rs#	alleles	chr	pos	B73	Z001	Z002	Z003	Z004	Z005	Z006	Z007	Z008	Z009	Z010	Z011	Z
 1_2111	C/T	1	2111	W	C	N	C	C	N	C	C	C	C	C	C	C	N	C	N	N	T	N	N	C	N	C	N	N	N	N
 1_2813	A/G	1	2813	M	N	A	G	A	N	N	N	A	G	G	N	N	A	N	G	N	N	A	A	N	A	G	N	A	N	N
 1_3006	A/C	1	3006	M	N	A	C	N	N	A	N	A	C	C	N	A	N	N	C	N	A	A	N	N	N	C	A	A	A	N
-1_3048	-/G	1	3048	-	-	-	N	-	N	-	-	-	-	0	-	-	-	-	-	-	+	-	-	N	-	-	-	+	N	N
+1_3048	-/G	1	3048	-	-	-	N	-	N	-	-	-	-	0	-	-	-	-	-	-	0	-	-	N	-	-	-	0	N	N
 1_3498	A/G	1	3498	K	G	G	G	A	G	A	A	G	A	G	A	G	A	A	G	G	G	A	G	G	G	A	G	G	G	G
 1_9513	T/C	1	9513	N	T	N	T	N	C	T	T	N	C	T	N	N	T	N	N	C	T	N	T	C	T	C	N	T	N	N
 1_9534	C/G	1	9534	C	C	N	C	C	C	C	C	N	C	C	C	G	C	C	C	C	G	C	N	C	C	G	C	C	C	C
