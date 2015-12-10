@@ -45,8 +45,12 @@ def readfile_and_process(infile_name, outfile_name):
                 snptokens = tokens[(args['start']-1):]
                 ### change the missing code to N
                 mcode = list(args['missingcode'])
-                for amcode in mcode:
-                    snptokens = ["N" if x== amcode else x for x in snptokens]
+
+                #for amcode in mcode:
+                #    snptokens = ["N" if x== amcode else x for x in snptokens]
+
+                ### replace with IUPAC
+                snptokens = IUPAC(snptokens)
 
                 ### get information for each locus
                 out = get_loci_info(snptokens)
@@ -86,6 +90,41 @@ def get_loci_info(snptokens):
         info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens), 5)
 
     return info
+
+def IUPAC(snptokens):
+    x = []
+    for index, item in enumerate(snptokens):
+        if item == "N":
+            x.extend(["N", "N"])
+        elif item == "A":
+            x.extend(["A", "A"])
+        elif item == "C":
+            x.extend(["C", "C"])
+        elif item == "G":
+            x.extend(["G", "G"])
+        elif item == "T":
+            x.extend(["T", "T"])
+        elif item == "R":
+            x.extend(["A", "G"])
+        elif item == "Y":
+            x.extend(["C", "T"])
+        elif item == "S":
+            x.extend(["C", "G"])
+        elif item == "W":
+            x.extend(["A", "T"])
+        elif item == "K":
+            x.extend(["G", "T"])
+        elif item == "M":
+            x.extend(["A", "C"])
+        elif item == "+":
+            x.extend(["+", "+"])
+        elif item == "0":
+            x.extend(["+", "-"])
+        elif item == "-":
+            x.extend(["-", "-"])
+        else:
+            warning("detected non-IUPAC genotype", item)
+    return(x)
 
 ##########################################################################################
 #get_loci_info(y[4:31])
