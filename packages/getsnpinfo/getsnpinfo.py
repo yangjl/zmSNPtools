@@ -11,10 +11,10 @@ import os
 def version():
     v0 = """
     ##########################################################################################
-    snpfrq version 3.2
+    getsnpinfo version 3.2
     Jinliang Yang
     updated: Dec 8th, 2015, for HapMap format GBS SNPs
-    updated: add IUPAC code
+    updated: add IUPAC code, changed name to getsnpinfo
     --------------------------------
     Compute SNP frq and loci missing rate from 'HapMap or BED+' format
 
