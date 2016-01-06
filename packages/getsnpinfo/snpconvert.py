@@ -15,7 +15,7 @@ def version():
     Jinliang Yang
 
     --------------------------------
-    Convert selected SNP in Hapmap format into 0/1/2 format
+    Convert selected SNP in Hapmap format into 0(major)/1/2(minor) format
 
     USAGE:
     ##########################################################################################
