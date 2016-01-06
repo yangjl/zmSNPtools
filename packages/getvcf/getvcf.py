@@ -46,7 +46,7 @@ def readfile_and_process(infile_name, outfile_name, snpid):
     with open(infile_name, 'r') as infile, open(outfile_name, "w") as outfile:
         for line in infile:
             ### print progress
-            if nsnp/agrs['barlen'] > p:
+            if nsnp/args['barlen'] > p:
                 p = p +1
                 print("###>>> processed [ ", "%s" % nsnp, " ]  SNPs")
 
