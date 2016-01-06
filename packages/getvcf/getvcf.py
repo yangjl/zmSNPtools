@@ -17,7 +17,7 @@ def version():
     Jan 6th, 2015, extract data from VCF
 
     --------------------------------
-    USAGE: snpfrq -i test_hmp1_chr1.dsf -s 5 -m "N" -o out.txt
+    USAGE: getvcf -i test.vcf -n snpid.txt -o out3.txt
     --------------------------------
     Note:
     ##########################################################################################
@@ -46,7 +46,7 @@ def readfile_and_process(infile_name, outfile_name, snpid):
     with open(infile_name, 'r') as infile, open(outfile_name, "w") as outfile:
         for line in infile:
             ### print progress
-            if nsnp/10000 > p:
+            if nsnp/agrs['barlen'] > p:
                 p = p +1
                 print("###>>> processed [ ", "%s" % nsnp, " ]  SNPs")
 
@@ -74,18 +74,14 @@ def get_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(version())
         )
-
-    # positional arguments:
-    #parser.add_argument('query', metavar='QUERY', type=str, nargs='*', \
-    #                    help='the question to answer')
-
     # optional arguments:
     parser.add_argument('-p', '--path', help='the path of the input files', \
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='input file', type=str)
     parser.add_argument('-n','--snpid', help='txt file of snpid, chr, pos', type=str)
-    parser.add_argument('-s','--start', help='start cols (1-based) of the genotype', type=int, default=10)
-    parser.add_argument('-e','--element', help='element to extract from the slot', type=int, default=2)
+    parser.add_argument('-s','--start', help='start cols (1-based) of the genotype, default=10', type=int, default=10)
+    parser.add_argument('-e','--element', help='element to extract from the slot, default=2', type=int, default=2)
+    parser.add_argument('-b','--barlen', help='number to print, default=10000', type=int, default=10000)
     #parser.add_argument('-m','--missingcode', help='code for missingness', type=str, default="N")
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
 
@@ -111,5 +107,5 @@ if __name__ == '__main__':
 
     et = timeit.default_timer()
 
-    print("###>>> Run time [ %.0f ] minutes!" % (et - st)/60)
+    print("###>>> Run time [ %.0f ] minutes!" % ((et - st)/60))
     print("###>>> Job finished!")
