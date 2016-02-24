@@ -97,7 +97,7 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
             else:
                 outfile.write("0/1:" + tokens[7] + ":" + tokens[6] + ":" + tokens[7] + ":")
             
-            q = tokens[6]/tokens[7]
+            q = float(tokens[6])/float(tokens[7])
             p = 1 - q
             outfile.write(round(math.log10(p^2),2) + "," + round(math.log10(2*p*q),2) + "," \
                 + round(math.log10(q^2),2) + "\n")    
@@ -115,13 +115,14 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
 def version():
     ver0 = """
     ##########################################################################################
-    BSMAP to VCF
+    BSMAP to VCF v0.2
     Author: Jinliang Yang to my little girl Olivia
     purpose: convert BSMAP format to VCF format
     --------------------------------
     
-    updated: 2/18/2016
+    updated: 2/23/2016
         o VCFv4.2
+        o tags => GT:DP:CC:CT:GL
     ##########################################################################################
     """
     return ver0
