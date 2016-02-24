@@ -44,3 +44,4 @@ Thumbs.db
 sam_parser/
 .RData
 .Rhistory
+*out*

@@ -98,9 +98,15 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
                 outfile.write("0/1:" + tokens[7] + ":" + tokens[6] + ":" + tokens[7] + ":")
             
             q = float(tokens[6])/float(tokens[7])
+            if(q == 0):
+                q = 1/(10**5)
+            elif(q == 1):
+                q = 1 - 1/(10**5)
             p = 1 - q
-            outfile.write(round(math.log10(p**2),2) + "," + round(math.log10(2*p*q),2) + "," \
-                + round(math.log10(q**2),2) + "\n")    
+            outfile.write(str(round(math.log10(p**2),2)) + ",")
+            outfile.write(str(round(math.log10(2*p*q),2)) + ",")
+            outfile.write(str(round(math.log10(q**2),2)) + "\n")
+            
             #### print progress
             if(verbose > 0):
                 i = i + 1
