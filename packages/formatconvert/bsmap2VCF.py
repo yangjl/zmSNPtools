@@ -74,12 +74,12 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
             tokens = line.split()
             #1. chrom, 2.start, 3.end, 4.name=context, 5, score, 6. strand, 7-12
             ###>>>
-            outfile.write(tokens[0] + "\t" + tokens[1] + "\t" + tokens[0] + "_" + tokens[1] + "\t" + "A" + "\t" + "B" + "\t")
+            outfile.write(tokens[0] + "\t" + tokens[1] + "\t" + tokens[0] + "_" + tokens[1] + "\t" + "A" + "\t" + "T" + "\t")
             outfile.write(str(int(float(tokens[5]))) + "\t")
-            if(int(float(tokens[5])) < 5):
-                outfile.write("q5" + "\t")
-            else:
-                outfile.write("PASS" + "\t")
+            #if(int(float(tokens[5])) < 5):
+            #    outfile.write("q5" + "\t")
+            #else:
+            outfile.write("PASS" + "\t")
             ### INFO
             outfile.write("CO=" + tokens[3] + ";")
             outfile.write("ST=" + tokens[2] + "\t")
@@ -107,13 +107,14 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
 def version():
     ver0 = """
     ##########################################################################################
-    BSMAP to VCF
+    BSMAP to VCF (version 1.0)
     Author: Jinliang Yang to my little girl Olivia
     purpose: convert BSMAP format to VCF format
     --------------------------------
     
     updated: 2/18/2016
         o VCFv4.2
+        0 A/T alleles and all PASS
     ##########################################################################################
     """
     return ver0
