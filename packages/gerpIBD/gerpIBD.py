@@ -44,13 +44,13 @@ def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed",
   #Out[16]: 85388
 
   ### GERP>0 merged with dsf7, dsf7 without B73 missing!
-  dsf7 = dsf7[dsf7['B73'] != 'N']
-  ibddsf = pd.merge(snp0, dsf7.iloc[:,np.r_[0, 7:19]], on="snpid", sort=False, how="inner")
+  # dsf7 = dsf7[dsf7['B73'] != 'N']
+  ibddsf = pd.merge(snp0, dsf7.iloc[:,np.r_[0, 3, 7:19]], on="snpid", sort=False, how="inner")
   return ibddsf
 
 ### create a pedigree table
 def getPed(ibddsf):
-  names = ibddsf.columns.values[10:22]
+  names = ibddsf.columns.values[11:23]
   names = np.sort(names)
   ped = pd.DataFrame({'F1': np.random.randn(144),
                       'P1': np.repeat(names, 12, axis=0),
@@ -69,8 +69,8 @@ def ComputeOneGroup(onegroup):
   p2 = "P2"
   for name, onesnp in onegroup.iterrows():
     # checking B73 reference
-    if onesnp["B73"] != "N":
-      b73 = onesnp["B73"]
+    if onesnp["major"] != "N":
+      b73 = onesnp["major"]
         
       if onesnp[p1] == b73 and onesnp[p2] == b73:
         gerp2a = gerp2a + onesnp["RS"]*2
@@ -146,8 +146,8 @@ def GetIBDgerp(ped, ibddsf):
   resa2 = resd2 = resh2 = a2b = ab2 = pd.DataFrame()
   
   for index, row in ped.iterrows():
-    mydf = ibddsf[ ["ibdid", "B73", "RS", "h", row["P1"], row["P2"]] ]
-    mydf.columns = ["ibdid", "B73", "RS", "h", 'P1', 'P2']
+    mydf = ibddsf[ ["ibdid", "major", "RS", "h", row["P1"], row["P2"]] ]
+    mydf.columns = ["ibdid", "major", "RS", "h", 'P1', 'P2']
     
     print(">>> computing F1: [ ", row["F1"], " ]!")
     myres = mydf.groupby(['ibdid']).apply(ComputeOneGroup)
@@ -255,11 +255,12 @@ def write_adk_only(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.8
+    gerpIBD version 1.0
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
+    updated: 04/06/2016, change major rather than B73 allele as beneficial allele!
     updated: 09/25/2015, add argument outtype; removed a1 and d1, no normalization!
     updated: 09/20/2015, imputation for triplotype, a2b and ab2
     updated: 09/08/2015, incomplete dominance
@@ -286,7 +287,8 @@ def get_parser():
   parser.add_argument('-p', '--path', help='the path of the input files', \
                       nargs='?', default=os.getcwd())
   parser.add_argument('-d','--ibd', help='IBD region in BED6 format', default="largedata/IBD/allsnps_11m_IBD.bed",  type=str)
-  parser.add_argument('-s','--snp', help='founder SNP type in DSF5 format', default="largedata/SNP/allsnps_11m.dsf5",  type=str)
+  parser.add_argument('-s','--snp', help='founder SNP type in DSF5 format, Note: major=should be beneficial allele.', 
+                      default="largedata/SNP/allsnps_11m.dsf5",  type=str)
   parser.add_argument('-g','--gerp', help='gerp rates in csv format', default='largedata/SNP/allsnps_11m_gerpv2_tidy.csv', type=str)
   parser.add_argument('-f','--dofd', help='degree of dominance', default='largedata/snpeff/gy_h.txt', type=str)
   parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
