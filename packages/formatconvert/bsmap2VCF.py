@@ -42,17 +42,14 @@ def write_VCF_meta(outfile_name, sampleid):
         outfile.write("##source=bsmap2VCF.py" + "\n")
         outfile.write("##reference=AGPv2" + "\n")
         
-        outfile.write('##INFO=<ID=CO,Number=1,Type=String,Description="Context">' + "\n")
+        outfile.write('##INFO=<ID=CO,Number=1,Type=String,Description="Context: CG, CHG and CHH">' + "\n")
         outfile.write('##INFO=<ID=ST,Number=1,Type=String,Description="Strand">' + "\n")
-        
-        outfile.write('##FILTER=<ID=q5,Description="Less than 5 effective count">' + "\n")
-        
-        
+
         outfile.write('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype, 1 methylated and 0 non-methylated">' + "\n")
-        outfile.write('##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth at his position">' + "\n")
+        outfile.write('##FORMAT=<ID=RA,Number=1,Type=Integer,Description="Methylation Ratio, column ratio">' + "\n")
         
-        outfile.write('##FORMAT=<ID=CC,Number=1,Type=Integer,Description="C Count">' + "\n")
-        outfile.write('##FORMAT=<ID=CT,Number=1,Type=Integer,Description="CT Count">' + "\n")
+        outfile.write('##FORMAT=<ID=CC,Number=1,Type=Integer,Description="C Count column C_count">' + "\n")
+        outfile.write('##FORMAT=<ID=CT,Number=1,Type=Integer,Description="CT Count=Depth, column CT_count">' + "\n")
         outfile.write('##FORMAT=<ID=GL,Number=3,Type=Float,Description="Genotype likelihood for 00/01/11">' + "\n")
         
         outfile.write("\t".join(map(str, (["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", sampleid ])))  + "\n")      
@@ -78,7 +75,7 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
             tokens = line.split()
             #1. chrom, 2.start, 3.end, 4.name=context, 5, score, 6. strand, 7-12
             ###>>>
-            outfile.write(tokens[0] + "\t" + tokens[1] + "\t" + tokens[0] + "_" + tokens[1] + "\t" + "A" + "\t" + "T" + "\t")
+            outfile.write(tokens[0] + "\t" + tokens[1] + "\t" + tokens[0] + "_" + tokens[1] + "\t" + "C" + "\t" + "T" + "\t")
             outfile.write(str(int(float(tokens[5]))) + "\t")
             #if(int(float(tokens[5])) < 5):
             #    outfile.write("q5" + "\t")
@@ -89,13 +86,13 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
             outfile.write("ST=" + tokens[2] + "\t")
             
             ### FORMAT
-            outfile.write("GT:DP:CC:CT:GL" + "\t")
+            outfile.write("GT:RA:CC:CT:GL" + "\t")
             if(float(tokens[4]) < lower and float(tokens[4]) >= 0):
-                outfile.write("0/0:" + tokens[7] + ":" + tokens[6] + ":" + tokens[7] + ":")
+                outfile.write("0/0:" + tokens[4] + ":" + tokens[6] + ":" + tokens[7] + ":")
             elif(float(tokens[4]) > upper and float(tokens[4]) <= 1):
-                outfile.write("1/1:" + tokens[7] + ":" + tokens[6] + ":" + tokens[7] + ":")
+                outfile.write("1/1:" + tokens[4] + ":" + tokens[6] + ":" + tokens[7] + ":")
             else:
-                outfile.write("0/1:" + tokens[7] + ":" + tokens[6] + ":" + tokens[7] + ":")
+                outfile.write("0/1:" + tokens[4] + ":" + tokens[6] + ":" + tokens[7] + ":")
             
             q = float(tokens[6])/float(tokens[7])
             if(q == 0):
@@ -121,15 +118,22 @@ def read_write_BS_VCF(infile_name, outfile_name,  verbose, lower, upper):
 def version():
     ver0 = """
     ##########################################################################################
-    BSMAP to VCF v0.3
+    BSMAP to VCF v0.4
     Author: Jinliang Yang to my little girl Olivia
     purpose: convert BSMAP format to VCF format
     --------------------------------
     
+    GT:RA:CC:CT:GL
+    => GT: genotype, 0/0 unmethylated; 1/1 methylated; 0/1 partially methylated. Determined by l=0.3 and u=0.7.
+    => RA: methylation ration, CC/CT, column ratio.
+    => CC: C_count, methylated C.
+    => CT: CT_count, total number of C and T.
+    => GL: Genotype likelihood, p=ratio, q=1-p. Then computed using p^2, 2pq and q^2.
+    
     updated: 2/23/2016
         o VCFv4.2
-        o A/T alleles and all PASS
-        o tags => GT:DP:CC:CT:GL
+        o C/T alleles and all PASS
+        o tags => GT:RA:CC:CT:GL
     ##########################################################################################
     """
     return ver0
