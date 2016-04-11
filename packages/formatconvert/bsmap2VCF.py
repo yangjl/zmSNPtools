@@ -46,7 +46,7 @@ def write_VCF_meta(outfile_name, sampleid):
         outfile.write('##INFO=<ID=ST,Number=1,Type=String,Description="Strand">' + "\n")
 
         outfile.write('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype, 1 methylated and 0 non-methylated">' + "\n")
-        outfile.write('##FORMAT=<ID=RA,Number=1,Type=Integer,Description="Methylation Ratio, column ratio">' + "\n")
+        outfile.write('##FORMAT=<ID=RA,Number=1,Type=Float,Description="Methylation Ratio, column ratio">' + "\n")
         
         outfile.write('##FORMAT=<ID=CC,Number=1,Type=Integer,Description="C Count column C_count">' + "\n")
         outfile.write('##FORMAT=<ID=CT,Number=1,Type=Integer,Description="CT Count=Depth, column CT_count">' + "\n")
