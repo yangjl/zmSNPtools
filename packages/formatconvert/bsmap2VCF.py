@@ -153,6 +153,7 @@ def get_parser():
                         nargs='?', default=os.getcwd())
     parser.add_argument('-i','--input', help='MSMAP output', type=str)
     parser.add_argument('-o', '--output', help='Convert to VCFv4.2 format', type=str)
+    parser.add_argument('-n', '--sampeid', help='sampleid', type=str)
     
     parser.add_argument('-l', '--lower', help='default=0.3, lower value of the ratio', type=float, default=0.3)
     parser.add_argument('-u', '--upper', help='default=0.7, upper value of the ratio', type=float, default=0.7)
@@ -175,7 +176,7 @@ def main():
         st = timeit.default_timer()
         id = args['input'].split("_")
         
-        write_VCF_meta(outfile_name=args['output'], sampleid=id[0])
+        write_VCF_meta(outfile_name=args['output'], sampleid=args['sampleid'])
 
         read_write_BS_VCF(infile_name=args['input'], outfile_name=args['output'], verbose=args['verbose'], lower=args['lower'], upper=args['upper'])
 
