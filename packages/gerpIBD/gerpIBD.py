@@ -177,7 +177,7 @@ def GetIBDgerp(ped, ibddsf):
   return hashres  
 
 ### write results
-def writeRes(hashres, outbase="largedata/SNP/test"):
+def writeRes(hashres, norm=1, outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
@@ -227,7 +227,7 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   gerpab2.to_csv("_".join([outbase, "ab2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 ### write results
-def write_adk_only(hashres, norm=args['norm'], outbase="largedata/SNP/test"):
+def write_adk_only(hashres, norm=1, outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
@@ -261,7 +261,7 @@ def write_adk_only(hashres, norm=args['norm'], outbase="largedata/SNP/test"):
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 ### write results
-def write_k_only(hashres, outbase="largedata/SNP/test"):
+def write_k_only(hashres, norm=1, outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
