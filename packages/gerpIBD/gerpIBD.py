@@ -187,42 +187,47 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpa2b = hashres["a2b"]
-  #gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2b = np.round(gerpa2b, 0)
   gerpa2b = gerpa2b.transpose() 
   gerpa2b.insert(0, "ibdid", gerpa2b.index)
   gerpa2b.to_csv("_".join([outbase, "a2b.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpab2 = hashres["ab2"]
-  #gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpab2 = np.round(gerpab2, 0)
   gerpab2 = gerpab2.transpose() 
   gerpab2.insert(0, "ibdid", gerpab2.index)
   gerpab2.to_csv("_".join([outbase, "ab2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 ### write results
-def write_adk_only(hashres, outbase="largedata/SNP/test"):
+def write_adk_only(hashres, norm=args['norm'], outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
@@ -232,21 +237,24 @@ def write_adk_only(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
@@ -263,7 +271,8 @@ def write_k_only(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerph2 = hashres["gerph2"]
-  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
@@ -272,11 +281,12 @@ def write_k_only(hashres, outbase="largedata/SNP/test"):
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 1.1
+    gerpIBD version 1.2
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
+    updated: 04/22/2016, change normalization option.
     updated: 04/06/2016, change output mode.
     updated: 04/06/2016, change major rather than B73 allele as beneficial allele!
     updated: 09/25/2015, add argument outtype; removed a1 and d1, no normalization!
@@ -311,6 +321,7 @@ def get_parser():
   parser.add_argument('-f','--dofd', help='degree of dominance', default='largedata/snpeff/gy_h.txt', type=str)
   parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
   parser.add_argument('-o', '--output', help='base of the output file', default='gerpIBD_output', type=str)
+  parser.add_argument('-l', '--norm', help='normalization of genotype, 1 (default) = yes, 0= no.', default= 1, type=int)
   parser.add_argument('-t', '--outtype', help='all, output all; adk output add, dom and k; k output k only!', default= 'all', type=str)
   return parser
   #parser = get_parser()
@@ -338,11 +349,11 @@ def main():
   result = GetIBDgerp(ped, ibddsf)
   print("###>>> writing results ...")
   if(args['outtype'] == "all"):
-      writeRes(hashres=result, outbase=args['output'])
+      writeRes(hashres=result, norm=args['norm'], outbase=args['output'])
   elif(args['outtype'] == "adk"):
-      write_adk_only(hashres=result, outbase=args['output'])
+      write_adk_only(hashres=result, norm=args['norm'],outbase=args['output'])
   elif(args['outtype'] == "k"):
-      write_k_only(hashres=result, outbase=args['output'])
+      write_k_only(hashres=result, norm=args['norm'], outbase=args['output'])
       
   ### get the end time
   et = timeit.default_timer()
