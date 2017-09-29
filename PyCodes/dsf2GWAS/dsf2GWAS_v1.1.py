@@ -84,16 +84,15 @@ def writefile(outfile_name, tsnp=[]):
 ###############################
 def read_write_file(infile_name, outfile_name):
     outsnp = []
-    with open(infile_name, 'r') as infile:
+    with open(infile_name, 'r') as infile, open(outfile_name, "w") as outfile:
         line1 = infile.readline()
 
         for line in infile:
             tokens = line.split()
             if mode == 1:
-                outsnp.append(recode2oxford(asnp=tokens))
-                with open(outfile_name, "w") as outfile:
-                    for out in outsnp:
-                        outfile.write('\t'.join(out) + '\n')
+                outsnp = recode2oxford(asnp=tokens)
+                for out in outsnp:
+                    outfile.write('\t'.join(out) + '\n')
             else:
                 warning("only support mode=0, 1 currently!")
         
