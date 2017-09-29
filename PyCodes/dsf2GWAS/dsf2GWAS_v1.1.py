@@ -128,11 +128,11 @@ def recode2oxford(asnp=[]):
     #print(len(asnp))
 
     for i in range(start, end):
-        if asnp[i] == 2:
+        if asnp[i] == "2":
             mysnp.append("1\t0\t0")
-        elif asnp[i] == 1:
+        elif asnp[i] == "1":
             mysnp.append("0\t1\t0")
-        elif asnp[i] == 0:
+        elif asnp[i] == "0":
             mysnp.append("0\t0\t1")
         else:
             warning(asnp[i], "have unkown alleles when imputing for Oxford!")
