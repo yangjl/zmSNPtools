@@ -91,8 +91,7 @@ def read_write_file(infile_name, outfile_name):
             tokens = line.split()
             if mode == 1:
                 outsnp = recode2oxford(asnp=tokens)
-                for out in outsnp:
-                    outfile.write('\t'.join(out) + '\n')
+                outfile.write('\t'.join(outsnp) + '\n')
             else:
                 warning("only support mode=0, 1 currently!")
         
