@@ -123,7 +123,7 @@ def recode2oxford(asnp=[]):
     '''
     diallel imputation for GenSel: major=1 0 0, minor=0 0 1, missing, heter=0 1 0
     '''
-    temp = line.split(".s_")
+    temp = asnp[0].split(".s_")
     mysnp = [temp[0], asnp[0], temp[1], "A", "T"]
     #print(len(asnp))
 
