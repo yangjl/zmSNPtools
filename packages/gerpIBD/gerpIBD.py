@@ -44,13 +44,13 @@ def readData(bedfile="largedata/IBD/allsnps_11m_IBD.bed",
   #Out[16]: 85388
 
   ### GERP>0 merged with dsf7, dsf7 without B73 missing!
-  dsf7 = dsf7[dsf7['B73'] != 'N']
-  ibddsf = pd.merge(snp0, dsf7.iloc[:,np.r_[0, 7:19]], on="snpid", sort=False, how="inner")
+  # dsf7 = dsf7[dsf7['B73'] != 'N']
+  ibddsf = pd.merge(snp0, dsf7.iloc[:,np.r_[0, 3, 7:19]], on="snpid", sort=False, how="inner")
   return ibddsf
 
 ### create a pedigree table
 def getPed(ibddsf):
-  names = ibddsf.columns.values[10:22]
+  names = ibddsf.columns.values[11:23]
   names = np.sort(names)
   ped = pd.DataFrame({'F1': np.random.randn(144),
                       'P1': np.repeat(names, 12, axis=0),
@@ -69,8 +69,8 @@ def ComputeOneGroup(onegroup):
   p2 = "P2"
   for name, onesnp in onegroup.iterrows():
     # checking B73 reference
-    if onesnp["B73"] != "N":
-      b73 = onesnp["B73"]
+    if onesnp["major"] != "N":
+      b73 = onesnp["major"]
         
       if onesnp[p1] == b73 and onesnp[p2] == b73:
         gerp2a = gerp2a + onesnp["RS"]*2
@@ -146,8 +146,8 @@ def GetIBDgerp(ped, ibddsf):
   resa2 = resd2 = resh2 = a2b = ab2 = pd.DataFrame()
   
   for index, row in ped.iterrows():
-    mydf = ibddsf[ ["ibdid", "B73", "RS", "h", row["P1"], row["P2"]] ]
-    mydf.columns = ["ibdid", "B73", "RS", "h", 'P1', 'P2']
+    mydf = ibddsf[ ["ibdid", "major", "RS", "h", row["P1"], row["P2"]] ]
+    mydf.columns = ["ibdid", "major", "RS", "h", 'P1', 'P2']
     
     print(">>> computing F1: [ ", row["F1"], " ]!")
     myres = mydf.groupby(['ibdid']).apply(ComputeOneGroup)
@@ -177,7 +177,7 @@ def GetIBDgerp(ped, ibddsf):
   return hashres  
 
 ### write results
-def writeRes(hashres, outbase="largedata/SNP/test"):
+def writeRes(hashres, norm=1, outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
@@ -187,42 +187,47 @@ def writeRes(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpa2b = hashres["a2b"]
-  #gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2b = gerpa2b.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2b = np.round(gerpa2b, 0)
   gerpa2b = gerpa2b.transpose() 
   gerpa2b.insert(0, "ibdid", gerpa2b.index)
   gerpa2b.to_csv("_".join([outbase, "a2b.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpab2 = hashres["ab2"]
-  #gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpab2 = gerpab2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpab2 = np.round(gerpab2, 0)
   gerpab2 = gerpab2.transpose() 
   gerpab2.insert(0, "ibdid", gerpab2.index)
   gerpab2.to_csv("_".join([outbase, "ab2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
 ### write results
-def write_adk_only(hashres, outbase="largedata/SNP/test"):
+def write_adk_only(hashres, norm=1, outbase="largedata/SNP/test"):
   #Apply operates on each row or column with the lambda function
   #axis = 0 -> act on columns, axis = 1 act on rows
   #x is a variable for the whole row or column
@@ -232,34 +237,58 @@ def write_adk_only(hashres, outbase="largedata/SNP/test"):
   #change to (-10, 10)
   
   gerpa2 = hashres["gerpa2"]
-  #gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpa2 = gerpa2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpa2 = np.round(gerpa2, 0)
   gerpa2 = gerpa2.transpose() 
   gerpa2.insert(0, "ibdid", gerpa2.index)
   gerpa2.to_csv("_".join([outbase, "a2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerpd2 = hashres["gerpd2"]
-  #gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerpd2 = gerpd2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerpd2 = np.round(gerpd2, 0)
   gerpd2 = gerpd2.transpose() 
   gerpd2.insert(0, "ibdid", gerpd2.index)
   gerpd2.to_csv("_".join([outbase, "d2.gs"]), sep="\t", header=True, index=False, index_label=False)
   
   gerph2 = hashres["gerph2"]
-  #gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
   gerph2 = np.round(gerph2, 0)
   gerph2 = gerph2.transpose() 
   gerph2.insert(0, "ibdid", gerph2.index)
   gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
 
+### write results
+def write_k_only(hashres, norm=1, outbase="largedata/SNP/test"):
+  #Apply operates on each row or column with the lambda function
+  #axis = 0 -> act on columns, axis = 1 act on rows
+  #x is a variable for the whole row or column
+  #This line will scale minimum = 0 and maximum = 1 for each column
+  #newrange = [-10, 10]
+  #mfac = (newrange[1] - newrange[0])
+  #change to (-10, 10)
+  
+  gerph2 = hashres["gerph2"]
+  if norm == 1:
+    gerph2 = gerph2.apply(lambda x:-10+(x.astype(float) - min(x))/(max(x)-min(x))*20, axis = 1)
+  gerph2 = np.round(gerph2, 0)
+  gerph2 = gerph2.transpose() 
+  gerph2.insert(0, "ibdid", gerph2.index)
+  gerph2.to_csv("_".join([outbase, "h2.gs"]), sep="\t", header=True, index=False, index_label=False)
+  
 def version():
     ver0 = """
     ##########################################################################################
-    gerpIBD version 0.8
+    gerpIBD version 1.2
     Author: Jinliang Yang
     purpose: compute the accumulative GERP rate in an IBD region
     --------------------------------
     
+    updated: 04/22/2016, change normalization option.
+    updated: 04/06/2016, change output mode.
+    updated: 04/06/2016, change major rather than B73 allele as beneficial allele!
     updated: 09/25/2015, add argument outtype; removed a1 and d1, no normalization!
     updated: 09/20/2015, imputation for triplotype, a2b and ab2
     updated: 09/08/2015, incomplete dominance
@@ -286,12 +315,14 @@ def get_parser():
   parser.add_argument('-p', '--path', help='the path of the input files', \
                       nargs='?', default=os.getcwd())
   parser.add_argument('-d','--ibd', help='IBD region in BED6 format', default="largedata/IBD/allsnps_11m_IBD.bed",  type=str)
-  parser.add_argument('-s','--snp', help='founder SNP type in DSF5 format', default="largedata/SNP/allsnps_11m.dsf5",  type=str)
+  parser.add_argument('-s','--snp', help='founder SNP type in DSF5 format, Note: major=should be beneficial allele.', 
+                      default="largedata/SNP/allsnps_11m.dsf5",  type=str)
   parser.add_argument('-g','--gerp', help='gerp rates in csv format', default='largedata/SNP/allsnps_11m_gerpv2_tidy.csv', type=str)
   parser.add_argument('-f','--dofd', help='degree of dominance', default='largedata/snpeff/gy_h.txt', type=str)
   parser.add_argument('-n', '--num', help='Only use positive numbers of GERP', default='positive', type=str)
   parser.add_argument('-o', '--output', help='base of the output file', default='gerpIBD_output', type=str)
-  parser.add_argument('-t', '--outtype', help='a, output all; k output add, dom and k only', default= 'a', type=str)
+  parser.add_argument('-l', '--norm', help='normalization of genotype, 1 (default) = yes, 0= no.', default= 1, type=int)
+  parser.add_argument('-t', '--outtype', help='all, output all; adk output add, dom and k; k output k only!', default= 'all', type=str)
   return parser
   #parser = get_parser()
   #parser.print_help()
@@ -317,10 +348,12 @@ def main():
   ### get IBM gerp looping through ped lines
   result = GetIBDgerp(ped, ibddsf)
   print("###>>> writing results ...")
-  if(args['outtype'] == "a"):
-      writeRes(hashres=result, outbase=args['output'])
+  if(args['outtype'] == "all"):
+      writeRes(hashres=result, norm=args['norm'], outbase=args['output'])
+  elif(args['outtype'] == "adk"):
+      write_adk_only(hashres=result, norm=args['norm'],outbase=args['output'])
   elif(args['outtype'] == "k"):
-      write_adk_only(hashres=result, outbase=args['output'])
+      write_k_only(hashres=result, norm=args['norm'], outbase=args['output'])
       
   ### get the end time
   et = timeit.default_timer()
