@@ -181,7 +181,7 @@ if __name__ == '__main__':
 
     start = args['start'] -1
     end = args['end']
-    gout = get_groups(groupfile)
+    gout = get_groups(groupfile=args['group'])
     readfile_and_process(args['input'], args['output'], gout)
 
     #print("Writing SNPs with multiple alleles ...")
