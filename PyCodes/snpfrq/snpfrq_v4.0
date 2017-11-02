@@ -71,8 +71,7 @@ def readfile_and_process(infile_name, outfile_name, gout):
         
         for line in infile:
             tokens = line.split()
-            tokens = ["N" if x == args['missingcode'] else x for x in tokens]
-            tokens = ["N" if x not in ('A', 'T', 'C', 'G') else x for x in tokens]
+            
             #idx1 and idx2 would be the idx of the two groups.
             out = get_loci_info(tokens, idx1, idx2)
 
@@ -102,6 +101,8 @@ def write_prob_snp():
 def get_loci_info(tokens, idx1, idx2):
 
     snptokens = tokens[start:end]
+    snptokens = ["N" if x == args['missingcode'] else x for x in snptokens]
+    snptokens = ["N" if x not in ('A', 'T', 'C', 'G') else x for x in snptokens]
     set0 = set(snptokens)
     if 'N' in set0:
         set0.remove('N')
@@ -120,18 +121,18 @@ def get_loci_info(tokens, idx1, idx2):
             info['major'] = snpset[0]
             info['minor'] = snpset[1]
             info['maf'] = round(c2/(c1+c2),3)
-            info['cmajor1'] = [tokens[i] for i in idx1].count(snpset[0]) #[L[i] for i in Idx]
-            info['cminor1'] = [tokens[i] for i in idx1].count(snpset[1])
-            info['cmajor2'] = [tokens[i] for i in idx2].count(snpset[0])
-            info['cminor2'] = [tokens[i] for i in idx2].count(snpset[1])
+            info['cmajor1'] = [snptokens[i] for i in idx1].count(snpset[0]) #[L[i] for i in Idx]
+            info['cminor1'] = [snptokens[i] for i in idx1].count(snpset[1])
+            info['cmajor2'] = [snptokens[i] for i in idx2].count(snpset[0])
+            info['cminor2'] = [snptokens[i] for i in idx2].count(snpset[1])
         else:
             info['major'] = snpset[1]
             info['minor'] = snpset[0]
             info['maf'] = round(c1/(c1+c2),3)
-            info['cmajor1'] = [tokens[i] for i in idx1].count(snpset[1])
-            info['cminor1'] = [tokens[i] for i in idx1].count(snpset[0])
-            info['cmajor2'] = [tokens[i] for i in idx2].count(snpset[1])
-            info['cminor2'] = [tokens[i] for i in idx2].count(snpset[0])
+            info['cmajor1'] = [snptokens[i] for i in idx1].count(snpset[1])
+            info['cminor1'] = [snptokens[i] for i in idx1].count(snpset[0])
+            info['cmajor2'] = [snptokens[i] for i in idx2].count(snpset[1])
+            info['cminor2'] = [snptokens[i] for i in idx2].count(snpset[0])
         info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens),3)
         info['snpid'] = tokens[0]
 
@@ -153,7 +154,7 @@ def get_parser():
     # optional arguments:
     parser.add_argument('-p', '--path', help='the path of the input files', \
                         nargs='?', default=os.getcwd())
-    parser.add_argument('-i','--input', help='input file', type=str)
+    parser.add_argument('-i','--input', help='hmp input file, first column must be snpid', type=str)
     parser.add_argument('-g','--group', help='a file with group information', type=str)
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
     
