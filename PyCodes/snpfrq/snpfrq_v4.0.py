@@ -121,18 +121,18 @@ def get_loci_info(tokens, idx1, idx2):
             info['major'] = snpset[0]
             info['minor'] = snpset[1]
             info['maf'] = round(c2/(c1+c2),3)
-            info['cmajor1'] = [snptokens[i] for i in idx1].count(snpset[0]) #[L[i] for i in Idx]
-            info['cminor1'] = [snptokens[i] for i in idx1].count(snpset[1])
-            info['cmajor2'] = [snptokens[i] for i in idx2].count(snpset[0])
-            info['cminor2'] = [snptokens[i] for i in idx2].count(snpset[1])
+            info['cmajor1'] = [tokens[i] for i in idx1].count(snpset[0]) #[L[i] for i in Idx]
+            info['cminor1'] = [tokens[i] for i in idx1].count(snpset[1])
+            info['cmajor2'] = [tokens[i] for i in idx2].count(snpset[0])
+            info['cminor2'] = [tokens[i] for i in idx2].count(snpset[1])
         else:
             info['major'] = snpset[1]
             info['minor'] = snpset[0]
             info['maf'] = round(c1/(c1+c2),3)
-            info['cmajor1'] = [snptokens[i] for i in idx1].count(snpset[1])
-            info['cminor1'] = [snptokens[i] for i in idx1].count(snpset[0])
-            info['cmajor2'] = [snptokens[i] for i in idx2].count(snpset[1])
-            info['cminor2'] = [snptokens[i] for i in idx2].count(snpset[0])
+            info['cmajor1'] = [tokens[i] for i in idx1].count(snpset[1])
+            info['cminor1'] = [tokens[i] for i in idx1].count(snpset[0])
+            info['cmajor2'] = [tokens[i] for i in idx2].count(snpset[1])
+            info['cminor2'] = [tokens[i] for i in idx2].count(snpset[0])
         info['missing'] = round((len(snptokens) - c1 - c2)/len(snptokens),3)
         info['snpid'] = tokens[0]
 
