@@ -1,0 +1,6 @@
+snpid	UID1	UID2	UID3	UID4	UID5	UID6	UID7	UID8	UID9	UID10
+snp1	C	C	C	A	A	A	A	A	A	C
+snp2	T	T	T	A	A	A	A	A	A	X
+snp3	T	T	T	A	A	A	A	A	A	T
+snp4	G	G	A	A	A	A	A	A	A	Y
+snp5	C	A	A	A	A	A	A	A	A	X

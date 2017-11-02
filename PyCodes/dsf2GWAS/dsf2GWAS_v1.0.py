@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#__author__ = 'yangjl'
+#__author__ = 'Jinliang Yang'
 
 from __future__ import print_function
 from __future__ import division
@@ -15,13 +15,13 @@ import os
 def version():
     v1 = """
     ##########################################################################################
-    version 1.0
+    version 1.1
     Jinliang Yang
-    updated: July 9th, 2014
-    passed R code test
+    updated: Sept 29th, 2017
+    not passed R code test
     --------------------------------
 
-    transform density SNP format (dsf) to GWAS (gensel4.2 now) and other formats
+    transform density SNP format (dsf) to GWAS (gensel4.2 now), PLINK (Oxford format)
     ##########################################################################################
     """
     return v1
@@ -64,7 +64,7 @@ def readfile(infile_name):
             if mode == 0:
                 tsnp.append(recode2gensel(asnp=tokens))
             else:
-                warning("only support mode=0 currently!")
+                warning("only support mode=0, 1 currently!")
 
         return tsnp
 
@@ -81,6 +81,21 @@ def writefile(outfile_name, tsnp=[]):
                 outfile.write('\t'.join(snps) + '\n')
 
 
+###############################
+def read_write_file(infile_name, outfile_name):
+    outsnp = []
+    with open(infile_name, 'r') as infile:
+        line1 = infile.readline()
+
+        for line in infile:
+            tokens = line.split()
+            if mode == 1:
+                outsnp.append(recode2oxford(asnp=tokens))
+                with open(outfile_name, "w") as outfile:
+                    outfile.write('\t'.join(outsnp) + `\n`)
+            else:
+                warning("only support mode=0, 1 currently!")
+        
 #################################
 def recode2gensel(asnp=[]):
     '''
@@ -103,7 +118,25 @@ def recode2gensel(asnp=[]):
             warning(asnp[i], "have multiple alleles when impute for gensel!")
     return mysnp
 
+#################################
+def recode2oxford(asnp=[]):
+    '''
+    diallel imputation for GenSel: major=1 0 0, minor=0 0 1, missing, heter=0 1 0
+    '''
+    temp = line.split(".s_")
+    mysnp = [temp[0], asnp[0], temp[1], "A", "T"]
+    #print(len(asnp))
 
+    for i in range(start, end):
+        if asnp[i] == 2:
+            mysnp.append("1\t0\t0")
+        elif asnp[i] == 1:
+            mysnp.append("0\t1\t0")
+        elif asnp[i] == 0:
+            mysnp.append("0\t0\t1")
+        else:
+            warning(asnp[i], "have unkown alleles when imputing for Oxford!")
+    return mysnp
 
 ################################
 def get_parser():
@@ -123,10 +156,11 @@ def get_parser():
     parser.add_argument('-o', '--output', help='output files, like chr1_merged', type=str)
     parser.add_argument('-s','--start', help='start position (1-based) of the genotype', type=int)
     parser.add_argument('-e', '--end', help='end position (1-based) of the genotype', type=int)
+    #parser.add_argument('-c', '--check', help='check header (snpid, major, minor) and first line of the genotype (A, T, C, G)', type=int)
     parser.add_argument('-m','--mode',
                         help='''[default --mode=0];
                         0, for GenSel [currently support];
-                        1, for PLINK;
+                        1, for PLINK (Oxford);
                         2, for SNPTEST;
                         ''',
                         choices=[0, 1,2], default=0, type=int)
@@ -149,17 +183,20 @@ if __name__ == '__main__':
     start = args['start']-1
     end = args['end']
     mode = args['mode']
-
-    checkfile(infile_name = args['input'])
+        
 
     print("Reading density SNP format (dsf) file ...")
-    dsnp = readfile(infile_name = args['input'])
-    print("[ ", len(dsnp), " ] SNPs loaded from [ ", end-start, " ] founders!")
+    if mode == 0:
+        checkfile(infile_name = args['input'])
+        dsnp = readfile(infile_name = args['input'])
+        print("[ ", len(dsnp), " ] SNPs loaded from [ ", end-start, " ] founders!")
 
-    ##### start imputation ######
-    print("Start recoding using mode [ %d ]" % mode)
-    writefile(args['output'], tsnp=dsnp)
-    print("File output to: [ %s ]" % args['output'])
+        ##### start imputation ######
+        print("Start recoding using mode [ %d ]" % mode)
+        writefile(args['output'], tsnp=dsnp)
+        print("File output to: [ %s ]" % args['output'])
+    elif mode == 1:
+        read_write_file(infile_name = args['input'], outfile_name=args['output'])
 
     et = timeit.default_timer()
     print("[ %.0f ] minutes of run time!" % ((et - st)/60))

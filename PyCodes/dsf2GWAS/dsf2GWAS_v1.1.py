@@ -90,8 +90,10 @@ def read_write_file(infile_name, outfile_name):
         for line in infile:
             tokens = line.split()
             if mode == 1:
+
                 outsnp = recode2oxford(asnp=tokens)
                 outfile.write('\t'.join(outsnp) + '\n')
+
             else:
                 warning("only support mode=0, 1 currently!")
         
@@ -122,11 +124,13 @@ def recode2oxford(asnp=[]):
     '''
     diallel imputation for GenSel: major=1 0 0, minor=0 0 1, missing, heter=0 1 0
     '''
+
     temp = asnp[0].split(".s_")
     mysnp = [temp[0], asnp[0], temp[1], "A", "T"]
     #print(len(asnp))
 
     for i in range(start, end):
+
         if asnp[i] == "2":
             mysnp.append("1\t0\t0")
         elif asnp[i] == "1":
